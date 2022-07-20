@@ -5,11 +5,17 @@ export const apiSlice = createApi({
     baseQuery: fetchBaseQuery({baseUrl: 'http://d29dkgeibpazuv.cloudfront.net'}),
     endpoints: builder => ({
         getGranules: builder.query({
-            query: () => '/impacts_2dvd_diameter020.txt.cmr.json'
+            query: () => '/',
+            method: 'GET',
         }),
+        getGranSearch: builder.query({
+            query: (search) => `/?delimiter=/&prefix=${search}`,
+            method: 'GET',
+        })
     })
 })
 
 export const {
     useGetGranulesQuery,
+    useGetGranSearchQuery,
 } = apiSlice

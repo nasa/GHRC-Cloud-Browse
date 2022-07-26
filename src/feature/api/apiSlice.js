@@ -2,20 +2,18 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 export const apiSlice = createApi({
     reducerPath: 'api',
-    baseQuery: fetchBaseQuery({baseUrl: 'http://d29dkgeibpazuv.cloudfront.net'}),
+    baseQuery: fetchBaseQuery({baseUrl: 'https://d29dkgeibpazuv.cloudfront.net/'}),
+    tagTypes: ['grans'],
     endpoints: builder => ({
-        getGranules: builder.query({
-            query: () => '/',
-            method: 'GET',
-        }),
         getGranSearch: builder.query({
-            query: (search) => `/?delimiter=/&prefix=${search}`,
-            method: 'GET',
-        })
+            query: ({ search, delim }) => ({
+                url: `/?delimiter=${delim}&prefix=${search}`,
+                responseHandler: (response) => response.text(),
+            }),
+        }),
     })
 })
 
 export const {
-    useGetGranulesQuery,
     useGetGranSearchQuery,
 } = apiSlice

@@ -1,17 +1,21 @@
-import { Box, CssBaseline, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import React from 'react'
-import { Outlet } from 'react-router-dom'
-import TopBar from './components/universal/TopBar'
-import { useGetGranulesQuery } from './feature/api/apiSlice'
+import ResultsTable from './components/appComponents/ResultsTable'
+import SearchBar from './components/appComponents/SearchBar'
+
+
 
 const App = () => {
 
   return (
-    <div>
-        <CssBaseline />
-        <TopBar />
-        <Outlet/>
-    </div>
+    <>
+      <Box display='flex' justifyContent='center' margin={2}>
+        <SearchBar />
+      </Box>
+      <Box display='flex' justifyContent='center' margin={2}>
+        <ResultsTable/>
+      </Box>
+    </>
   )
 }
 

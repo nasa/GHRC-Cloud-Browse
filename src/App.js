@@ -23,7 +23,7 @@ const App = () => {
         <DownloadBtn />
       </Box>
       <Box display='flex' justifyContent='center' margin={2}>
-        <ResultsTable skip={skip} setSkipTrue={setSkipTrue}/>
+        <ResultsTable skip={skip} setSkipTrue={setSkipTrue} setSkipFalse={setSkipFalse}/>
       </Box>
     </>
   )

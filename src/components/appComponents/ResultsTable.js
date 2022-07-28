@@ -1,9 +1,11 @@
-import { DataGrid } from '@mui/x-data-grid'
+import { DataGrid, GridEventListener } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import { useGetGranSearchQuery } from '../../feature/api/apiSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { XMLParser } from 'fast-xml-parser'
 import { setSelectedList } from '../../feature/selectedListSlice'
+import { setDelim } from '../../feature/delimSlice'
+import { setSearch } from '../../feature/searchSlice'
 
 //**********variable and class delarations**********/
 const parser = new XMLParser()
@@ -36,7 +38,7 @@ const getFName = (uri) => {
 
 
 //**********React component**********
-const ResultsTable = ({ skip, setSkipTrue }) => {
+const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     //**********State Variables**********
     const search = useSelector(state => state.search.value)
     const delim = useSelector(state => state.delim.value)
@@ -68,6 +70,15 @@ const ResultsTable = ({ skip, setSkipTrue }) => {
     }
 
 
+    const handleCellDoubleClick  = (id) => {
+        if(id.slice(-1) === '/'){
+            setSkipFalse()
+            dispatch(setDelim(''))
+            dispatch(setSearch(id))
+        }
+    }
+
+
     //**********Api Logic**********
     const {
         data: resp,
@@ -94,7 +105,7 @@ const ResultsTable = ({ skip, setSkipTrue }) => {
             rows={response}
             columns={delim === '/'? fileColumns: granColumns}
             rowsPerPageOptions={[10, 25, 50, 100]}
-            checkboxSelection
+            checkboxSelection= {delim === '/' ? false : true}
             getRowId={row => delim === '/'? row.Prefix: row.Key}
             onSelectionModelChange={(id) => {
                 const selectedIDs = new Set(id)
@@ -102,6 +113,7 @@ const ResultsTable = ({ skip, setSkipTrue }) => {
                 selectedIDs.has(delim === '/'? row.Prefix: row.Key))
                 dispatch(setSelectedList(selectedRowData))
             }}
+            onCellDoubleClick={(row) => {handleCellDoubleClick(row['id'])}} 
         />
     </div>
   )

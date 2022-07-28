@@ -1,8 +1,9 @@
 import { DataGrid } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import { useGetGranSearchQuery } from '../../feature/api/apiSlice'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { XMLParser } from 'fast-xml-parser'
+import { setSelectedList } from '../../feature/selectedListSlice'
 
 //**********variable and class delarations**********/
 const parser = new XMLParser()
@@ -39,6 +40,7 @@ const ResultsTable = ({ skip, setSkipTrue }) => {
     //**********State Variables**********
     const search = useSelector(state => state.search.value)
     const delim = useSelector(state => state.delim.value)
+    const dispatch = useDispatch()
     const [response, setResponse] = useState([]) 
 
 
@@ -98,7 +100,7 @@ const ResultsTable = ({ skip, setSkipTrue }) => {
                 const selectedIDs = new Set(id)
                 const selectedRowData = response.filter((row) =>
                 selectedIDs.has(delim === '/'? row.Prefix: row.Key))
-                console.log(selectedRowData)
+                dispatch(setSelectedList(selectedRowData))
             }}
         />
     </div>

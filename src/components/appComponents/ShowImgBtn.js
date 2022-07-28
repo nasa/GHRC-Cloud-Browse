@@ -22,7 +22,8 @@ const ShowImgBtn = () => {
                 onClick={handleClose}
             >
                 <Box component='img'
-                    src='https://picsum.photos/800/600' />
+                    src='https://picsum.photos/800/600' 
+                    />
             </Backdrop>
         </>
     )

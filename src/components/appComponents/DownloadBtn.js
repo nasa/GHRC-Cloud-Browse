@@ -8,6 +8,7 @@ const DownloadBtn = () => {
 
 
     const handleClick = () => {
+        //helps prevent download every time a row is selected
         downloader(selectedList)
     }
 

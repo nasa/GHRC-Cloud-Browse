@@ -17,10 +17,12 @@ const SearchBar = ({ setSkipFalse }) => {
         setSkipFalse()
 
         if(localSearch === '' || localSearch === '/'){
+            //condition to reset to top of file structure
             dispatch(setDelim('/'))
             dispatch(setSearch(''))
             return
         } else if(delim === '/'){
+            //handles search from base of file structure
             dispatch(setDelim(''))
         }
         dispatch(setSearch(localSearch))

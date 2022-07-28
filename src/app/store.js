@@ -11,6 +11,7 @@ export default configureStore({
     delim: delimReducer,
     selectedList: selectedListReducer,
   },
+  //necisarry for search aip
   middleware: getDefaultMiddleware =>
   getDefaultMiddleware().concat(apiSlice.middleware)
 })

@@ -9,6 +9,7 @@ export const delimSlice = createSlice({
     initialState,
     reducers: {
         setDelim: (state, action) => {
+            //sets state to given value
             state.value = action.payload
         },
     },

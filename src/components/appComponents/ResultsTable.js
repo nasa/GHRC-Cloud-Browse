@@ -11,6 +11,7 @@ import { setSearch } from '../../feature/searchSlice'
 const parser = new XMLParser()
 
 const granColumns = [
+    //columbs layout for when granules are returned
     {
         field: 'name', 
         headerName: 'Name', 
@@ -25,12 +26,14 @@ const granColumns = [
 
 
 const fileColumns = [
+    //columbs layout for when folders are returned
     {field: 'Prefix', headerName: 'Folder Name', width: 200},
 ]
 
 
 //**********Functions**********
 const getFName = (uri) => {
+    //takes in a uri and return granule name
     if(uri === undefined){return 'Loading'}
     const temp = uri.split('/')
     return temp.pop()
@@ -39,6 +42,7 @@ const getFName = (uri) => {
 
 //**********React component**********
 const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
+
     //**********State Variables**********
     const search = useSelector(state => state.search.value)
     const delim = useSelector(state => state.delim.value)
@@ -48,6 +52,8 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
 
     //**********State Functions**********
     const processResp = (resp) =>{
+        //process the response from the api call into an array of objects
+        //for use in the data grid
         const xml = resp
         const json = parser.parse(xml)
         if(delim === '/'){
@@ -59,11 +65,11 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             setResponse(validateResponse(jResp))
             setSkipTrue()
        }
-        //console.log(response)
     }
 
 
     const validateResponse = (resp) => {
+        //validates the response from the api
         if(typeof resp === 'undefined'){
             return []
         } else return resp
@@ -71,6 +77,8 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
 
 
     const handleCellDoubleClick  = (id) => {
+        //handles double click of a columb and queries a file 
+        //if the double clicked columb is a file
         if(id.slice(-1) === '/'){
             setSkipFalse()
             dispatch(setDelim(''))
@@ -90,6 +98,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         skip: skip,})
 
     useEffect(() => {
+        //low level handling of api response
         if(isSuccess){
             processResp(resp)
         } else if(isError){
@@ -108,6 +117,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             checkboxSelection= {delim === '/' ? false : true}
             getRowId={row => delim === '/'? row.Prefix: row.Key}
             onSelectionModelChange={(id) => {
+                {/*handles the selction of rows*/}
                 const selectedIDs = new Set(id)
                 const selectedRowData = response.filter((row) =>
                 selectedIDs.has(delim === '/'? row.Prefix: row.Key))

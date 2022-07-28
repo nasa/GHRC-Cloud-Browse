@@ -9,6 +9,7 @@ export const selectedListSlice = createSlice({
     initialState,
     reducers: {
         setSelectedList: (state, action) => {
+            //sets state to given value
             state.value = action.payload
         },
     },

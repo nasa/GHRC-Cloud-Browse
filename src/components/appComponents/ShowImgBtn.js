@@ -11,6 +11,7 @@ const ShowImgBtn = () => {
     const [open, setOpen] = React.useState(false);
 
     const checkDisabled = () => {
+        //check to see if selected granule is a valid img
         if(selectedList.length !== 1){
             return true
         }else if (delim === '/'){

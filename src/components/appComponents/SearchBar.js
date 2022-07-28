@@ -4,16 +4,26 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setDelim } from '../../feature/delimSlice'
 import { setSearch } from '../../feature/searchSlice'
 
-const SearchBar = () => {
+
+const SearchBar = ({ setSkipFalse }) => {
+    
+    const delim = useSelector(state => state.delim.value)
     const [localSearch, setLocalSearch] = useState('')
     const dispatch = useDispatch()
-    const delim = useSelector(state => state.delim.value)
 
 
     const handleSubmit = () =>{
         //TODO: Add logic for advance search optimization
+        setSkipFalse()
+
+        if(localSearch === '' || localSearch === '/'){
+            dispatch(setDelim('/'))
+            dispatch(setSearch(''))
+            return
+        } else if(delim === '/'){
+            dispatch(setDelim(''))
+        }
         dispatch(setSearch(localSearch))
-        if(delim === '/'){dispatch(setDelim(''))}
     }
 
 

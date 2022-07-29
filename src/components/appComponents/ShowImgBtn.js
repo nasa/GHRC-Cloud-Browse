@@ -8,7 +8,7 @@ const ShowImgBtn = () => {
     const selectedList = useSelector(state => state.selectedList.value)
     const delim = useSelector(state => state.delim.value)
     const [open, setOpen] = React.useState(false);
-    const supportedImg = ['jpg', 'png', 'gif']
+    const supportedImg = ['jpg', 'png', 'gif', 'svg']
 
 
     const isImg = () => {
@@ -42,7 +42,7 @@ const ShowImgBtn = () => {
     const handleClose = () => {setOpen(false);}
     const handleToggle = () => {setOpen(!open);}
 
-    
+
     return (
         <>
             <Button variant='outlined' sx={{ml: 15}}

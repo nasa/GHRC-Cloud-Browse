@@ -5,11 +5,11 @@ import config from '../../config'
 import { useSelector } from 'react-redux'
 
 const ShowImgBtn = () => {
-       //not finnished until bucket structure is complete
     const selectedList = useSelector(state => state.selectedList.value)
     const delim = useSelector(state => state.delim.value)
     const [open, setOpen] = React.useState(false);
     const supportedImg = ['jpg', 'png', 'gif']
+
 
     const isImg = () => {
         //checks if a file is a valid img
@@ -20,6 +20,7 @@ const ShowImgBtn = () => {
             return false
         })
     }
+
 
     const checkDisabled = () => {
         //check to see if selected granule is a valid img
@@ -37,14 +38,11 @@ const ShowImgBtn = () => {
         }
     }
 
-    const handleClose = () => {
-        setOpen(false);
-    }
 
-    const handleToggle = () => {
-        setOpen(!open);
-    }
+    const handleClose = () => {setOpen(false);}
+    const handleToggle = () => {setOpen(!open);}
 
+    
     return (
         <>
             <Button variant='outlined' sx={{ml: 15}}

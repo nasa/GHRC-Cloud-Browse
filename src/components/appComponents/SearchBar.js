@@ -3,11 +3,13 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setDelim } from '../../feature/delimSlice'
 import { setSearch } from '../../feature/searchSlice'
+import { setCrumb } from '../../feature/crumbSlice'
 
 
 const SearchBar = ({ setSkipFalse }) => {
     
     const delim = useSelector(state => state.delim.value)
+    const crumb = useSelector(state => state.crumb.value)
     const [localSearch, setLocalSearch] = useState('')
     const dispatch = useDispatch()
 
@@ -19,13 +21,14 @@ const SearchBar = ({ setSkipFalse }) => {
         if(localSearch === '' || localSearch === '/'){
             //condition to reset to top of file structure
             dispatch(setDelim('/'))
+            dispatch(setCrumb(''))
             dispatch(setSearch(''))
             return
         } else if(delim === '/'){
             //handles search from base of file structure
             dispatch(setDelim(''))
         }
-        dispatch(setSearch(localSearch))
+        dispatch(setSearch(`${crumb}${localSearch}`))
     }
 
 

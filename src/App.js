@@ -1,5 +1,6 @@
 import { Box } from '@mui/material'
 import React, { useState } from 'react'
+import BreadCrumbs from './components/appComponents/BreadCrumbs'
 import DownloadBtn from './components/appComponents/DownloadBtn'
 import ResultsTable from './components/appComponents/ResultsTable'
 import SearchBar from './components/appComponents/SearchBar'
@@ -22,6 +23,7 @@ const App = () => {
         <ShowImgBtn />
         <DownloadBtn />
       </Box>
+      <BreadCrumbs setSkipFalse={setSkipFalse}/>
       <Box display='flex' justifyContent='center' margin={2}>
         <ResultsTable skip={skip} setSkipTrue={setSkipTrue} setSkipFalse={setSkipFalse}/>
       </Box>

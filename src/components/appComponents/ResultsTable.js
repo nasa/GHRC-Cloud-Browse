@@ -6,6 +6,7 @@ import { XMLParser } from 'fast-xml-parser'
 import { setSelectedList } from '../../feature/selectedListSlice'
 import { setDelim } from '../../feature/delimSlice'
 import { setSearch } from '../../feature/searchSlice'
+import { setCrumb } from '../../feature/crumbSlice'
 
 //**********variable and class delarations**********/
 const parser = new XMLParser()
@@ -83,6 +84,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             setSkipFalse()
             dispatch(setDelim(''))
             dispatch(setSearch(id))
+            dispatch(setCrumb(id))
         }
     }
 

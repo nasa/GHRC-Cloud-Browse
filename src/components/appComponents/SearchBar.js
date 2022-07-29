@@ -35,6 +35,7 @@ const SearchBar = ({ setSkipFalse }) => {
                 variant='outlined'
                 lable='Search'
                 id='searchFeild'
+                placeholder='Search'
                 value={localSearch}
                 onChange={event => setLocalSearch(event.target.value)}
                 onKeyDown={event => event.key === 'Enter' ? handleSubmit(): ''}

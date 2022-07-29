@@ -1,4 +1,4 @@
-import { DataGrid, GridEventListener } from '@mui/x-data-grid'
+import { DataGrid } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import { useGetGranSearchQuery } from '../../feature/api/apiSlice'
 import { useDispatch, useSelector } from 'react-redux'

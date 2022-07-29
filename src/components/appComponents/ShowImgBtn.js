@@ -9,6 +9,17 @@ const ShowImgBtn = () => {
     const selectedList = useSelector(state => state.selectedList.value)
     const delim = useSelector(state => state.delim.value)
     const [open, setOpen] = React.useState(false);
+    const supportedImg = ['jpg', 'png', 'gif']
+
+    const isImg = () => {
+        //checks if a file is a valid img
+        return supportedImg.some(element => {
+            if (selectedList[0]["Key"].split('.').pop() === element){
+                return true
+            }
+            return false
+        })
+    }
 
     const checkDisabled = () => {
         //check to see if selected granule is a valid img
@@ -18,7 +29,7 @@ const ShowImgBtn = () => {
             return true
         }else if (typeof selectedList[0]["Key"] === 'undefined'){
             return true
-        }else if (selectedList[0]["Key"].split('.').pop() === 'jpg'){
+        }else if (isImg){
             return false
         } else {
             console.log('true')

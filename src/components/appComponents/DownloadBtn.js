@@ -29,7 +29,7 @@ const DownloadBtn = () => {
     <Button
     onClick={() => {handleClick()}}
     variant='outlined'
-    sx={{ml: 2}}>
+    sx={{ml: 13, borderRadius: 2}}>
         Download
     </Button>
     </div>

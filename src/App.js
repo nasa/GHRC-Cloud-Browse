@@ -4,7 +4,6 @@ import BreadCrumbs from './components/appComponents/BreadCrumbs'
 import DownloadBtn from './components/appComponents/DownloadBtn'
 import ResultsTable from './components/appComponents/ResultsTable'
 import SearchBar from './components/appComponents/SearchBar'
-import ShowImgBtn from './components/appComponents/ShowImgBtn'
 
 
 
@@ -20,7 +19,6 @@ const App = () => {
         <SearchBar setSkipFalse={setSkipFalse} />
       </Box>
       <Box display='flex'>
-        <ShowImgBtn />
         <DownloadBtn />
       </Box>
       <BreadCrumbs setSkipFalse={setSkipFalse}/>

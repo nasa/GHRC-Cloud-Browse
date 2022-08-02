@@ -19,7 +19,7 @@ const BreadCrumbs = ({ setSkipFalse }) => {
   return (
     <Box sx={{ml: 15, mt:1}}>
         <Breadcrumbs>
-            <Typography onClick={() => handleClick()}>
+            <Typography onClick={() => handleClick()} sx={{cursor:"pointer"}}>
                 Root
             </Typography>
             <Typography>

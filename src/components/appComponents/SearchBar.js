@@ -42,7 +42,15 @@ const SearchBar = ({ setSkipFalse }) => {
                 value={localSearch}
                 onChange={event => setLocalSearch(event.target.value)}
                 onKeyDown={event => event.key === 'Enter' ? handleSubmit(): ''}
-                sx={{width: '40%'}}
+                sx={{
+                    width: '40%',
+                    
+                        ['& fieldset']:{
+                            borderRadius: 3,
+                            
+                        }
+                    
+                }}
             />
         </>
     )

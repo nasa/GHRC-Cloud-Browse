@@ -11,7 +11,7 @@ export default configureStore({
     search: searchReducer,
     delim: delimReducer,
     selectedList: selectedListReducer,
-    crumb: crumbReducer
+    crumb: crumbReducer,
   },
   //necisarry for search aip
   middleware: getDefaultMiddleware =>

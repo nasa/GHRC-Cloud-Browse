@@ -1,4 +1,4 @@
-import { DataGrid } from '@mui/x-data-grid'
+import { DataGrid, gridClasses } from '@mui/x-data-grid'
 import React, { useEffect, useState } from 'react'
 import { useGetGranSearchQuery } from '../../feature/api/apiSlice'
 import { useDispatch, useSelector } from 'react-redux'
@@ -7,6 +7,9 @@ import { setSelectedList } from '../../feature/selectedListSlice'
 import { setDelim } from '../../feature/delimSlice'
 import { setSearch } from '../../feature/searchSlice'
 import { setCrumb } from '../../feature/crumbSlice'
+import { isImage } from '../../lib/isImage'
+import { alpha, Backdrop, Box } from '@mui/material'
+import config from '../../config'
 
 //**********variable and class delarations**********/
 const parser = new XMLParser()
@@ -49,6 +52,8 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     const delim = useSelector(state => state.delim.value)
     const dispatch = useDispatch()
     const [response, setResponse] = useState([]) 
+    const [open, setOpen] = useState(false)
+    const [img, setImg] = useState('')
 
 
     //**********State Functions**********
@@ -85,8 +90,18 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             dispatch(setDelim(''))
             dispatch(setSearch(id))
             dispatch(setCrumb(id))
+        } else if (isImage(id)){
+            setImg(id)
+            handleToggle()
         }
     }
+
+
+    const handleClose = () => {
+        setOpen(false)
+        setImg('')
+    }
+    const handleToggle = () => {setOpen(!open);}
 
 
     //**********Api Logic**********
@@ -109,10 +124,30 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     }, [resp])
 
 
+    //**********data table styling
+    const ODD_OPACITY = 0.2
+
+
     //**********jsx html**********
   return (
     <div style={{height: 635, width: '90%'}}>
         <DataGrid
+            sx={{
+                '& .MuiDataGrid-cell:hover':{cursor:'pointer'},
+                [`& .${gridClasses.row}.even`]:{
+                    backgroundColor: '#e3e3e3',
+                    '&:hover, &.Mui-hovered':{
+                        backgroundColor: alpha('#c1d5f7', ODD_OPACITY),
+                    },
+                    '&.Mui-selected': {
+                        backgroundColor: alpha('#7ca7f7', ODD_OPACITY),
+                        '&:hover, &.Mui-hovered':{
+                            backgroundColor: alpha('#c1d5f7', ODD_OPACITY),
+                        }
+                    }
+                },
+                borderRadius: 5
+            }}
             rows={response}
             columns={delim === '/'? fileColumns: granColumns}
             rowsPerPageOptions={[10, 25, 50, 100]}
@@ -126,8 +161,19 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                 dispatch(setSelectedList(selectedRowData))
             }}
             onCellDoubleClick={(row) => {handleCellDoubleClick(row['id'])}} 
+            getRowClassName={(params) => 
+                params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'}
         />
-    </div>
+        <Backdrop
+            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={open}
+            onClick={handleClose}
+        >
+            <Box component='img'
+                src={!isImage(img) ? '' :`${config.cloudWatchUrlBase}${img}`} 
+                />
+        </Backdrop>
+</div>
   )
 }
 

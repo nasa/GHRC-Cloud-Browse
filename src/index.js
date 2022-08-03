@@ -22,7 +22,7 @@ root.render(
                     <Route path='/' element={<App />} /> 
                 </Routes>
             </BrowserRouter>
-            {/*<Footer />*/}
+            <Footer />
         </div>
         </Provider>
     </React.StrictMode>,

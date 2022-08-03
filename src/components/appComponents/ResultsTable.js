@@ -14,35 +14,6 @@ import config from '../../config'
 //**********variable and class delarations**********/
 const parser = new XMLParser()
 
-const granColumns = [
-    //columbs layout for when granules are returned
-    {
-        field: 'name', 
-        headerName: 'Name', 
-        width: 450,
-        valueGetter: (params) => 
-            `${getFName(params.row.Key)}`
-    },
-    {field: 'Key', headerName: 'Key', width: 550},
-    {field: 'LastModified', headerName: 'Last Modified', width: 130},
-    {field: 'Size', headerName: 'Size', type: 'number', width: 90},
-]
-
-
-const fileColumns = [
-    //columbs layout for when folders are returned
-    {field: 'Prefix', headerName: 'Folder Name', width: 200},
-]
-
-
-//**********Functions**********
-const getFName = (uri) => {
-    //takes in a uri and return granule name
-    if(uri === undefined){return 'Loading'}
-    const temp = uri.split('/')
-    return temp.pop()
-}
-
 
 //**********React component**********
 const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
@@ -54,6 +25,65 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     const [response, setResponse] = useState([]) 
     const [open, setOpen] = useState(false)
     const [img, setImg] = useState('')
+
+
+    //*********************table Layout **************** */
+    const granColumns = [
+        //columbs layout for when granules are returned
+        {
+            field: 'name', 
+            headerName: 'Name', 
+            flex: 3,
+            valueGetter: (params) => 
+                `${getFName(params.row.Key)}`
+        },
+        {
+            field: 'fileType',
+            headerName: 'File Type',
+            flex: 0.5,
+            valueGetter: (params) => `${getFType(params.row.Key)}`
+        },
+        {field: 'LastModified', headerName: 'Last Modified', flex: 2, type: 'dateTime',
+            valueGetter: ({value}) => value && new Date(value)},
+        {field: 'Size', headerName: 'Size', flex: 1, valueGetter: (params) => `${getFSize(params.row.Size)}`},
+    ]
+
+
+    const fileColumns = [
+        //columbs layout for when folders are returned
+        {field: 'Prefix', headerName: 'Folder Name', flex: 1},
+    ]
+
+
+    //**************Table Layout Functions*************** */
+    const getFName = (uri) => {
+        //takes in a uri and return granule name
+        if(uri === undefined){return 'Loading'}
+        if(uri.slice(-1) === '/'){
+            if(uri === search) return'./'
+            return `./${uri.split(search).pop()}`
+        }
+        const temp = uri.split('/')
+        return temp.pop()
+    }
+
+
+    const getFType = (uri) => {
+        if(uri === undefined){return ''}
+        if(uri.slice(-1) === '/'){
+            return 'Folder'
+        }
+        const temp = uri.split('.')
+        return temp.pop()
+    }
+
+
+    const getFSize = (rawSize) => {
+        if(rawSize === undefined){return ''}
+        if(rawSize === 0){return '-'}
+        const size = (rawSize/1024).toPrecision(4)
+        return `${size} MB`
+    }
 
 
     //**********State Functions**********

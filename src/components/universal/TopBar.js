@@ -9,7 +9,7 @@ const TopBar = () => {
             <Box
             sx={{width: 85}}
             component='img' 
-            src='ghrc_logo.png'/>
+            src='assets/ghrc_logo.png'/>
             <Typography variant="h5" noWrap component="div" sx={{ml: 2}}>
                 Browse UI
             </Typography>

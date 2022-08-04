@@ -10,6 +10,7 @@ import { setCrumb } from '../../feature/crumbSlice'
 import { isImage } from '../../lib/isImage'
 import { alpha, Backdrop, Box } from '@mui/material'
 import config from '../../config'
+import { useHref } from 'react-router-dom'
 
 //**********variable and class delarations**********/
 const parser = new XMLParser()
@@ -98,7 +99,8 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             setSkipTrue()
         } else {
             const jResp = json['ListBucketResult']['Contents']
-            setResponse(validateResponse(jResp))
+            const filtered = validateResponse(jResp)
+            setResponse(filtered)
             setSkipTrue()
        }
     }
@@ -108,7 +110,21 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         //validates the response from the api
         if(typeof resp === 'undefined'){
             return []
-        } else return resp
+        } else {
+            if(search === '' || search.slice(-1) !== '/') {
+                return resp
+            } else {
+                return resp.filter(respFilter)
+            }
+        }
+    }
+
+
+    const respFilter = (gran) =>{
+        if(gran['Key'].slice(-1) === '/') return true
+        const gSplit = gran['Key'].split(search)
+        const str  = gSplit[1]
+        return !str.includes('/')
     }
 
 
@@ -131,7 +147,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         setOpen(false)
         setImg('')
     }
-    const handleToggle = () => {setOpen(!open);}
+    const handleToggle = () => {setOpen(!open);} 
 
 
     //**********Api Logic**********
@@ -147,11 +163,16 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     useEffect(() => {
         //low level handling of api response
         if(isSuccess){
-            processResp(resp)
+            processResp(resp)      
         } else if(isError){
             console.log(error)
+            if(error.includes('404')) {href('/404')}
         }
     }, [resp])
+
+    
+    const useMyHref = (to) => {useHref(to)}
+    const href = useMyHref
 
 
     //**********data table styling

@@ -7,6 +7,7 @@ import { CssBaseline } from '@mui/material';
 import App from './App'
 import store from './app/store'
 import { Footer } from './components/universal/Footer';
+import PageNotFound from './pages/PageNotFound';
 
 
 const root = createRoot(document.getElementById('root'))
@@ -19,7 +20,8 @@ root.render(
             <TopBar />
             <BrowserRouter>
                 <Routes>
-                    <Route path='/' element={<App />} /> 
+                    <Route path='/' element={<App />} />
+                    <Route path='/404' element={<PageNotFound />} />
                 </Routes>
             </BrowserRouter>
             <Footer />

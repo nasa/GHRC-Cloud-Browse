@@ -6,7 +6,7 @@ export const Footer = () => {
     <AppBar position="relative" sx={{top:'auto', bottom:0, bgcolor: '#2276AC'}}>
 
       <Box display='flex' justifyContent='center' marginTop={2}>
-        <Grid container spacing={2} width='60%' sx={{borderBottom: 1, mb:1}}>
+        <Grid container spacing={2} width='50%' sx={{borderBottom: 1, mb:1}}>
           <Grid item xs={6}>
             <Box
               sx={{width: 100}}
@@ -18,8 +18,8 @@ export const Footer = () => {
               src='assets/itsc_logo.png'/>
           </Grid>
           <Grid item xs={6} display='flex' justifyContent='right'>
-            <Box
-                sx={{width: 75, ml:4}}
+            <Box 
+                sx={{height: 60, ml:4, pb:0.5}}
                 component='img' 
                 src='assets/nasa_logo.png'/>
             <Box

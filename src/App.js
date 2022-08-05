@@ -22,7 +22,7 @@ const App = () => {
         <DownloadBtn />
       </Box>
       <BreadCrumbs setSkipFalse={setSkipFalse}/>
-      <Box display='flex' justifyContent='center' margin={2}>
+      <Box display='flex' justifyContent='center' margin={2} sx={{pb:2}}>
         <ResultsTable skip={skip} setSkipTrue={setSkipTrue} setSkipFalse={setSkipFalse}/>
       </Box>
     </>

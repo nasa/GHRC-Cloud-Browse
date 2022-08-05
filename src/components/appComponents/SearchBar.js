@@ -46,8 +46,7 @@ const SearchBar = ({ setSkipFalse }) => {
                     width: '40%',
                     
                         ['& fieldset']:{
-                            borderRadius: 3,
-                            
+                            borderRadius: 3, 
                         }
                     
                 }}

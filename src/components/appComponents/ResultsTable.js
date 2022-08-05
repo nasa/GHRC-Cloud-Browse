@@ -83,7 +83,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         if(rawSize === undefined){return ''}
         if(rawSize === 0){return '-'}
         const size = (rawSize/1024).toPrecision(4)
-        return `${size} MB`
+        return `${size} KB`
     }
 
 
@@ -197,7 +197,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                         }
                     }
                 },
-                borderRadius: 5
+                borderRadius: 2,
             }}
             rows={response}
             columns={delim === '/'? fileColumns: granColumns}

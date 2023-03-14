@@ -7,7 +7,7 @@ import { setCrumb } from '../../feature/crumbSlice'
 
 
 const SearchBar = ({ setSkipFalse }) => {
-    
+    // console.log(setSkipFalse);
     const delim = useSelector(state => state.delim.value)
     const crumb = useSelector(state => state.crumb.value)
     const [localSearch, setLocalSearch] = useState('')
@@ -28,6 +28,11 @@ const SearchBar = ({ setSkipFalse }) => {
             //handles search from base of file structure
             dispatch(setDelim(''))
         }
+        console.log('here')
+        console.log('local'+ localSearch)
+        console.log('crum' +crumb)
+        console.log('delim ' + delim)
+        console.log(`${crumb}${localSearch}`)
         dispatch(setSearch(`${crumb}${localSearch}`))
     }
 

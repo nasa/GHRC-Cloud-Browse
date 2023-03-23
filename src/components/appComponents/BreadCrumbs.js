@@ -27,7 +27,7 @@ const BreadCrumbs = ({ setSkipFalse }) => {
 
     const handleCrumbClick = (crmb) =>{
         setSkipFalse()
-        dispatch(setDelim(''))
+        dispatch(setDelim('/'))
         dispatch(setSearch(crmb['path']))
         dispatch(setCrumb(crmb['path']))
     }

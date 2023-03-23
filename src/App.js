@@ -27,6 +27,7 @@ const App = () => {
       dispatch(setDelim('/'))
       console.log(params);
       dispatch(setSearch(params))
+      dispatch(setCrumb(params))
       // dispatch(setCrumb(params))
       
     }

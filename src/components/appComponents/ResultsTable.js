@@ -167,23 +167,6 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         setResponse(processedResp)
         setSkipTrue()
 
-    //     if(delim === '/'){
-    //         var jResp;
-    //         console.log('if')
-    //         if(json['ListBucketResult']['CommonPrefixes']){ jResp= json['ListBucketResult']['CommonPrefixes']}
-    //         else { jResp = json['ListBucketResult']['Contents']}
-            
-    //         setResponse(validateResponse(jResp))
-    //         console.log('response', response)
-    //         setSkipTrue()
-    //     } else {
-    //         console.log('else')
-    //         const jResp = json['ListBucketResult']['Contents']
-    //         const filtered = validateResponse(jResp)
-    //         setResponse(filtered)
-    //         console.log('response', response)
-    //         setSkipTrue()
-    //    }
     }
 
 

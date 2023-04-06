@@ -59,13 +59,15 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     //**************Table Layout Functions*************** */
     const getFName = (uri) => {
         //takes in a uri and return granule name
-        // console.log(uri);
+        
         if(uri === undefined){return 'Loading'}
+
         if(uri.slice(-1) === '/'){
-            if(uri === search) return'./'
-            return uri
-            // `./${uri.split(search).pop()}`
+            var index = uri.indexOf(search);
+            var result = uri.slice(0, index) + uri.slice(index + search.length);
+            return result
         }
+        console.log(uri);
         const temp = uri.split('/')
         return temp.pop()
     }
@@ -169,7 +171,15 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
 
     }
 
+    const updateBrowserURL  = (id) => {
+        var currentUrl = window.location.href;
 
+        // Modify the URL
+        var newUrl = currentUrl + '#' + id;
+
+        // Change the URL without reloading the page
+        window.history.pushState({ path: newUrl }, '', newUrl);
+    }
 
 
 
@@ -190,6 +200,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             setImg(id)
             handleToggle()
         }
+        // updateBrowserURL(id)
     }
 
 
@@ -261,7 +272,8 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                 selectedIDs.has(row.Key))
                 dispatch(setSelectedList(selectedRowData))
             }}
-            onCellDoubleClick={(row) => {handleCellDoubleClick(row['id'])}} 
+            onRowClick={(row) => {handleCellDoubleClick(row['id'])}} 
+            // onCellClick   onCellDoubleClick  onRowClick
             getRowClassName={(params) => 
                 params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'}
         />

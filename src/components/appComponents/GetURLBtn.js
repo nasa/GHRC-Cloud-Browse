@@ -59,7 +59,12 @@ const GetURLBtn = () => {
 
     const downloader = (linkList) => {
         var url = window.location.href;
-        var urlPlain = url.split('#')[0].slice(0,-1)
+        // var tmpUrl = url.split('#')[0]
+        var urlPlain = url.split('#')[0]
+        if(urlPlain.endsWith("/")) {
+          urlPlain = urlPlain.slice(0,-1)
+        }
+        
         listOfLinks.current = [];
 
         linkList.forEach((path, i) =>{

@@ -11,7 +11,10 @@ import { isImage } from '../../lib/isImage'
 import { alpha, Backdrop, Box } from '@mui/material'
 import config from '../../config'
 import { useHref } from 'react-router-dom'
-
+import { Document, Page, pdfjs } from "react-pdf";
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import 'react-pdf/dist/esm/Page/TextLayer.css';
+import '../../App.css'
 //**********variable and class delarations**********/
 const parser = new XMLParser()
 
@@ -239,7 +242,29 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     //**********data table styling
     const ODD_OPACITY = 0.2
 
+    // PDF document view logic
+    const [numPages, setNumPages] = useState(null);
+    const [pageNumber, setPageNumber] = useState(1);
+    pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
+    function onDocumentLoadSuccess({ numPages }) {
+        setNumPages(numPages);
+        setPageNumber(1);
+    }
+    function changePage(offset) {
+        setPageNumber((prevPageNumber) => prevPageNumber + offset);
+    }
+
+    function previousPage(event) {
+        event.stopPropagation();
+        changePage(-1);
+    }
+
+    function nextPage(event) {
+        event.stopPropagation();
+        changePage(1);
+    }
+console.log('isImage(img)', isImage(img))
     //**********jsx html**********
   return (
     <div style={{height: 635, width: '90%'}}>
@@ -282,9 +307,27 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             open={open}
             onClick={handleClose}
         >
-            <Box component='img'
-                src={!isImage(img) ? '' :`${config.cloudWatchUrlBase}${img}`} 
+            {isImage(img) == 'pdf'?
+                <div>
+                    <Document file={`${config.cloudWatchUrlBase}${img}`} onLoadSuccess={onDocumentLoadSuccess}>
+                        <Page pageNumber={pageNumber} scale={1.25}/>
+                    </Document>
+                    <div className={'prevNext'}>
+                        <button className={'cursorPtr'} disabled={pageNumber <= 1} onClick={previousPage}>
+                            Previous
+                        </button>
+                        <span>
+                          Page {pageNumber} of {numPages}
+                        </span>
+                        <button className={'cursorPtr'} disabled={pageNumber >= numPages} onClick={nextPage}>
+                            Next
+                        </button>
+                    </div>
+                </div>:
+                <Box component='img' src={!isImage(img)? '' :''}
                 />
+            }
+
         </Backdrop>
 </div>
   )

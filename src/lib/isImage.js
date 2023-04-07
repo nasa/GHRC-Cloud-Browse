@@ -8,6 +8,8 @@ export const isImage = (gran) =>{
             return true
         case 'gif':
             return true
+        case 'pdf':
+            return 'pdf'
         default:
             return false
     }

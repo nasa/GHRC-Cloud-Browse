@@ -8,16 +8,19 @@ import { setDelim } from '../../feature/delimSlice'
 import { setSearch } from '../../feature/searchSlice'
 import { setCrumb } from '../../feature/crumbSlice'
 import { isImage } from '../../lib/isImage'
-import { alpha, Backdrop, Box } from '@mui/material'
+import { alpha, Backdrop } from '@mui/material'
 import config from '../../config'
 import { useHref } from 'react-router-dom'
-import { Document, Page, pdfjs } from "react-pdf";
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import '../../App.css'
+import FileViewer from 'react-file-viewer';
+import TextFileViewer from "./TextFileViewer";
+import printJS from 'print-js';
+
+import {FaDownload, FaPrint} from "react-icons/fa";
 //**********variable and class delarations**********/
 const parser = new XMLParser()
-
 
 //**********React component**********
 const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
@@ -50,12 +53,6 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         {field: 'LastModified', headerName: 'Last Modified', flex: 2, type: 'dateTime',
             valueGetter: ({value}) => value && new Date(value)},
         {field: 'Size', headerName: 'Size', flex: 1, valueGetter: (params) => `${getFSize(params.row.Size)}`},
-    ]
-
-
-    const fileColumns = [
-        //columbs layout for when folders are returned
-        {field: 'Prefix', headerName: 'Folder Name', flex: 1},
     ]
 
 
@@ -211,7 +208,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         setOpen(false)
         setImg('')
     }
-    const handleToggle = () => {setOpen(!open);} 
+    const handleToggle = () => {setOpen(!open);}
 
 
     //**********Api Logic**********
@@ -234,7 +231,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         }
     }, [resp])
 
-    
+
     const useMyHref = (to) => {useHref(to)}
     const href = useMyHref
 
@@ -242,29 +239,23 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     //**********data table styling
     const ODD_OPACITY = 0.2
 
-    // PDF document view logic
-    const [numPages, setNumPages] = useState(null);
-    const [pageNumber, setPageNumber] = useState(1);
-    pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+   //Download file after viewing
+    const downloadFile = (fileUrl) => {
+        console.log('file url', fileUrl)
+        fetch(fileUrl)
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(new Blob([blob]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', fileUrl.split('/').pop());
+                document.body.appendChild(link);
+                link.click();
+                link.parentNode.removeChild(link);
+            });
+    };
 
-    function onDocumentLoadSuccess({ numPages }) {
-        setNumPages(numPages);
-        setPageNumber(1);
-    }
-    function changePage(offset) {
-        setPageNumber((prevPageNumber) => prevPageNumber + offset);
-    }
-
-    function previousPage(event) {
-        event.stopPropagation();
-        changePage(-1);
-    }
-
-    function nextPage(event) {
-        event.stopPropagation();
-        changePage(1);
-    }
-console.log('isImage(img)', isImage(img))
+    const checkFormat = isImage(img) === 'pdf' || isImage(img) === 'jpeg' || isImage(img) === 'png' || isImage(img) === 'gif';
     //**********jsx html**********
   return (
     <div style={{height: 635, width: '90%'}}>
@@ -307,27 +298,41 @@ console.log('isImage(img)', isImage(img))
             open={open}
             onClick={handleClose}
         >
-            {isImage(img) == 'pdf'?
-                <div>
-                    <Document file={`${config.cloudWatchUrlBase}${img}`} onLoadSuccess={onDocumentLoadSuccess}>
-                        <Page pageNumber={pageNumber} scale={1.25}/>
-                    </Document>
-                    <div className={'prevNext'}>
-                        <button className={'cursorPtr'} disabled={pageNumber <= 1} onClick={previousPage}>
-                            Previous
-                        </button>
-                        <span>
-                          Page {pageNumber} of {numPages}
+            {checkFormat?
+                <div style={{ height: "100%", width: "100%", "text-align":"center" }}>
+                    <h2 className="file-name">{`${config.cloudWatchUrlBase}${img}`.split('/').pop()}
+                        <span /*style={{ float: 'right' }}*/>
+                            <span className={'printIcon'}>
+                                <button className={'downPrint'} onClick={() =>   printJS({printable: `${config.cloudWatchUrlBase}${img}`, type: isImage(img) !== 'pdf' ? 'image':'pdf'})}><FaPrint className="fa-download-print" size={32} title="Print" /></button>
+                            </span>
+                            <span className={'printIcon'}>
+                                <button className={'downPrint'} onClick={() => downloadFile(`${config.cloudWatchUrlBase}${img}`)}><FaDownload className="fa-download-print" size={32} title="Download" /></button>
+                            </span>
                         </span>
-                        <button className={'cursorPtr'} disabled={pageNumber >= numPages} onClick={nextPage}>
-                            Next
-                        </button>
-                    </div>
-                </div>:
-                <Box component='img' src={!isImage(img)? '' :''}
-                />
+                    </h2>
+                    <FileViewer
+                        fileType={isImage(img)}
+                        filePath={`${config.cloudWatchUrlBase}${img}`}
+                        errorComponent={() => <div>Sorry, we could not load the document.</div>}
+                    />
+                    );</div>:""
             }
+            {
+                !checkFormat && isImage(img) === 'text'? <TextFileViewer fileUrl={`${config.cloudWatchUrlBase}${img}`}/>:''
+            }
+            {
+                !checkFormat && isImage(img) !== 'text'?
+                    <div style={{ "text-align":"center" , top: "50%", left: "50%"}}>
+                        <h2 className="file-name">{`${config.cloudWatchUrlBase}${img}`.split('/').pop()}
+                            <span /*style={{ float: 'right' }}*/>
 
+                            <span className={'printIcon'}>
+                                <button className={'downPrint'} onClick={() => downloadFile(`${config.cloudWatchUrlBase}${img}`)}><FaDownload className="fa-download-print" size={40} title="Download" /></button>
+                            </span>
+                        </span>
+                        </h2>
+                        </div>:""
+            }
         </Backdrop>
 </div>
   )

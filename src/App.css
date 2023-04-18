@@ -5,3 +5,37 @@
 .cursorPtr{
     cursor: pointer;
 }
+.pdf-canvas {
+    margin: auto;
+}
+
+.pdf-viewer-center{
+    text-align: center;
+    margin: 5px;
+}
+
+.textScroll{
+    overflow-y: scroll;
+    height: 800px;
+    width: 900px;
+
+}
+
+.printIcon{
+    margin-left: 20px;
+}
+
+.downPrint{
+    background-color: unset;
+    border-width: 0;
+}
+
+.downPrint:hover{
+    background-color: black;
+    border-radius: 10px; /* change the value to adjust the rounding */
+    cursor: pointer;
+    opacity: 0.6;
+}
+.fa-download-print {
+    color: white;
+}

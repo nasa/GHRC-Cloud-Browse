@@ -3,13 +3,19 @@
 export const isImage = (gran) =>{
     switch (gran.split('.').pop()) {
         case 'jpg':
-            return true
+            return 'jpeg'
         case 'png':
-            return true
+            return 'png'
         case 'gif':
-            return true
+            return 'gif'
         case 'pdf':
             return 'pdf'
+        case 'txt':
+            return 'text'
+        case 'json':
+            return 'json'
+        case 'doc':
+            return 'doc'
         default:
             return false
     }

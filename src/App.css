@@ -39,3 +39,42 @@
 .fa-download-print {
     color: white;
 }
+.backButton{
+    font-size: 15px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.disabledButton {
+    pointer-events: none;
+    opacity: 0.8;
+    cursor: not-allowed;
+    margin-left: 5px;
+}
+
+.backButton:hover {
+    color: #1976d2;
+    background-color: white;
+}
+.backButton span {
+    margin-left: 5px;
+}
+
+.topRight {
+    position: absolute;
+    top: 20px;
+    right: 100px;
+    cursor: pointer;
+
+}
+.topLeft {
+    position: absolute;
+    top: 20px;
+    left: 100px;
+    cursor: pointer;
+
+}

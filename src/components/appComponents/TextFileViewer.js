@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { FaDownload, FaPrint } from 'react-icons/fa';
+import {FaArrowLeft, FaArrowRight, FaDownload, FaPrint, FaTimes} from 'react-icons/fa';
 import printJS from 'print-js';
+import config from "../../config";
 
-function TextFileViewer({ fileUrl }) {
-    console.log('file url', fileUrl)
+function TextFileViewer({ fileUrl, setOpen, setImg, img, response, setFilePath, showArrow }) {
     const [text, setText] = useState('');
     useEffect(() => {
         fetch( fileUrl )
@@ -31,12 +31,6 @@ function TextFileViewer({ fileUrl }) {
     };
 
     const printFile = () => {
-
-        /*const printWindow = window.open(fileUrl, "PRINT", "height=800,width=600");
-
-        printWindow.onload = function() {
-            printWindow.print();
-        }*/
         printJS({printable: `<pre>${text}</pre>`, type: 'raw-html', style: `
       @page {
         size: 8.5in 11in;
@@ -50,16 +44,40 @@ function TextFileViewer({ fileUrl }) {
 
     };
 
+    const handleClose = (event) => {
+        setOpen(false);
+        setImg('')
+    };
+
+    const handleArrow = (i, a) => {
+        const currentImageIndex = response.findIndex((row2) => row2.Key === img);
+        let id;
+        if( a === 'r'){
+            id = response[currentImageIndex+1]?response[currentImageIndex+1].Key:null
+        }
+        else if (a == 'l'){
+            id = response[currentImageIndex-1]? response[currentImageIndex-1].Key:null
+        }
+        setFilePath(`${config.cloudWatchUrlBase}${id}`)
+        if(id !== null) setImg(id)
+        setOpen(true)
+    };
+
     return (
         <div style={{ height: "100%", "text-align":"center" }}>
             <h2 className="file-name">{fileUrl.split('/').pop()}
-            <span>
+            <span className={'topRight'}>
+                 {showArrow? <FaArrowLeft className={'printIcon cursorPtr'} title={"prev"} size={32} onClick={(e)=> handleArrow(img,'l')}/>:""}
                  <span className={'printIcon'}>
                 <button className={'downPrint'} onClick={printFile}><FaPrint className="fa-download-print" title="Print" size={32}/></button>
                  </span>
                       <span className={'printIcon'}>
                 <button className={'downPrint'} onClick={downloadFile}><FaDownload className="fa-download-print" title="Download" size={32}/></button>
                       </span>
+
+                        <FaTimes onClick={handleClose} title={'Close'} className={'printIcon downPrint'} size={36}/>
+                {showArrow? <FaArrowRight className={'printIcon cursorPtr'} title={"next"} size={32} onClick={(e)=> handleArrow(img,'r')}/>:""}
+
             </span></h2>
         <div style={{
             background: 'white',
@@ -69,25 +87,13 @@ function TextFileViewer({ fileUrl }) {
             fontFamily: 'Courier New, monospace',
             color: 'black'
         }}>
-            <div /*style={{
-                background: 'lightgray',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '4px'
-            }}*/>
-
-            </div>
             <div key={fileUrl} className={'textScroll'}>
-
                     <pre >{text}</pre>
-
             </div>
         </div>
         </div>
 
     );
 }
-
 
 export default TextFileViewer;

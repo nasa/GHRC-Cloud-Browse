@@ -36,7 +36,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             headerName: 'Name', 
             flex: 3,
             valueGetter: (params) => 
-                `${getFName(params.row.Key)}`
+            `${getFName(params.row.Key)}`
         },
         {
             field: 'fileType',
@@ -59,11 +59,15 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     //**************Table Layout Functions*************** */
     const getFName = (uri) => {
         //takes in a uri and return granule name
+        
         if(uri === undefined){return 'Loading'}
+
         if(uri.slice(-1) === '/'){
-            if(uri === search) return'./'
-            return `./${uri.split(search).pop()}`
+            var index = uri.indexOf(search);
+            var result = uri.slice(0, index) + uri.slice(index + search.length);
+            return result
         }
+        // console.log(uri);
         const temp = uri.split('/')
         return temp.pop()
     }
@@ -78,14 +82,27 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         return temp.pop()
     }
 
+    const convertToList = (data) => {
+
+        // XML parser may return a object on single occurence, this captures the edge case
+        if(!Array.isArray(data)){
+           var tmpObject = [data]
+           return tmpObject   
+        }
+        return data
+    }
+
 
     const getFSize = (rawSize) => {
         if(rawSize === undefined){return ''}
-        if(rawSize === 0){return '-'}
-        const size = (rawSize/1024).toPrecision(4)
-        return `${size} KB`
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        if (rawSize === 0) return '0 Bytes';
+        const ii = parseInt(Math.floor(Math.log(rawSize) / Math.log(1024)), 10);
+        return `${(rawSize / (1024 ** ii)).toPrecision(4)} ${sizes[ii]}`;
     }
-
+    const isfolder = (path)  => {
+        return path.endsWith('/');
+    }
 
     //**********State Functions**********
     const processResp = (resp) =>{
@@ -93,53 +110,98 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         //for use in the data grid
         const xml = resp
         const json = parser.parse(xml)
-        if(delim === '/'){
-            const jResp = json['ListBucketResult']['CommonPrefixes']
-            setResponse(validateResponse(jResp))
-            setSkipTrue()
-        } else {
-            const jResp = json['ListBucketResult']['Contents']
-            const filtered = validateResponse(jResp)
-            setResponse(filtered)
-            setSkipTrue()
-       }
-    }
+        console.log(json)
+        var jResp;
+        var responseFolder;
+        var responseObject;
+        var processedResp = []
 
+        // console.log(json['ListBucketResult']['Prefix'])
+        if(json['ListBucketResult']['CommonPrefixes'])
+        { 
+            responseFolder= convertToList(json['ListBucketResult']['CommonPrefixes'])
+            
+            responseFolder.forEach(element => {
+                if(element['Prefix'] === json['ListBucketResult']['Prefix']){
+                    // Ignore this folder, as it is the root folder
+                    processedResp.push({Key: element['Prefix']})
+                } else if (isfolder(element['Prefix'])) {
+                    // console.log(element['Prefix'].split('/').reverse()[1])
+                    var folderName = element['Prefix'].split('/').reverse()[1]
+                    // console.log(folderName)
+                    processedResp.push({Key: element['Prefix']})
+                } else {
+                    
+                    // console.log(element['Prefix'])
+                    
+                }
+                
+            });
+           
+        } 
+        
+        if(json['ListBucketResult']['Contents']){
+            // console.log('here')
+            responseObject = convertToList(json['ListBucketResult']['Contents'])
 
-    const validateResponse = (resp) => {
-        //validates the response from the api
-        if(typeof resp === 'undefined'){
-            return []
-        } else {
-            if(search === '' || search.slice(-1) !== '/') {
-                return resp
-            } else {
-                return resp.filter(respFilter)
-            }
+            responseObject.forEach(element => {
+                // console.log(element['Key'])
+                // processedResp.push({Key: element['Key'], Size: element['Size'], LastModified: element['LastModified']})
+                if(element['Size'] === 0){
+                    // Ignore this folder, as it is the root folder
+                    console.log(element['Key'])
+                } 
+                else 
+                if (isfolder(element['Key'])) {
+                    // console.log('folder')
+                    processedResp.push({Key: element['Key']})
+                } 
+                else {
+                    // console.log('found')
+                    processedResp.push({Key: element['Key'], Size: element['Size'], LastModified: element['LastModified']})  
+                }
+                
+            });
+   
         }
+
+        console.log(processedResp)
+        setResponse(processedResp)
+        setSkipTrue()
+
     }
 
+    const updateBrowserURL  = (id) => {
+        var currentUrl = window.location.href;
 
-    const respFilter = (gran) =>{
-        if(gran['Key'].slice(-1) === '/') return true
-        const gSplit = gran['Key'].split(search)
-        const str  = gSplit[1]
-        return !str.includes('/')
+        // Modify the URL
+        var newUrl =  '#' + id;
+
+        // Change the URL without reloading the page
+        window.history.pushState({ path: newUrl }, '', newUrl);
     }
+
 
 
     const handleCellDoubleClick  = (id) => {
+        
+        // console.log('id: '+id);
         //handles double click of a columb and queries a file 
         //if the double clicked columb is a file
         if(id.slice(-1) === '/'){
+            // console.log(id.slice(-1));
             setSkipFalse()
-            dispatch(setDelim(''))
+            dispatch(setDelim('/'))
             dispatch(setSearch(id))
             dispatch(setCrumb(id))
+            
+
+
         } else if (isImage(id)){
             setImg(id)
             handleToggle()
         }
+        updateBrowserURL(id)
     }
 
 
@@ -148,8 +210,12 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         setImg('')
     }
     const handleToggle = () => {setOpen(!open);} 
-
-
+    
+    const chk = () => {
+       
+      
+        
+    }
     //**********Api Logic**********
     const {
         data: resp,
@@ -161,6 +227,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         skip: skip,})
 
     useEffect(() => {
+    
         //low level handling of api response
         if(isSuccess){
             processResp(resp)      
@@ -200,18 +267,23 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                 borderRadius: 2,
             }}
             rows={response}
-            columns={delim === '/'? fileColumns: granColumns}
+            columns={granColumns}
             rowsPerPageOptions={[10, 25, 50, 100]}
-            checkboxSelection= {delim === '/' ? false : true}
-            getRowId={row => delim === '/'? row.Prefix: row.Key}
+            checkboxSelection= {true}
+            getRowId={row => row.Key}
             onSelectionModelChange={(id) => {
+
                 {/*handles the selction of rows*/}
                 const selectedIDs = new Set(id)
                 const selectedRowData = response.filter((row) =>
-                selectedIDs.has(delim === '/'? row.Prefix: row.Key))
+                selectedIDs.has(row.Key))
                 dispatch(setSelectedList(selectedRowData))
             }}
-            onCellDoubleClick={(row) => {handleCellDoubleClick(row['id'])}} 
+            onRowClick={(row) => {handleCellDoubleClick(row['id']);
+           }
+            
+        } 
+            // onCellClick   onCellDoubleClick  onRowClick
             getRowClassName={(params) => 
                 params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'}
         />

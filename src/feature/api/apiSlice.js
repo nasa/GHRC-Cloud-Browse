@@ -10,7 +10,7 @@ export const apiSlice = createApi({
     endpoints: builder => ({
         getGranSearch: builder.query({
             query: ({ search, delim }) => ({
-                url: `/?delimiter=${delim}&prefix=${search}`,
+                url: `/?list-type=2&delimiter=${delim}&prefix=${search}`,
                 responseHandler: (response) => response.text(),
             }),
         }),

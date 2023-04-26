@@ -11,8 +11,7 @@ import { isImage } from '../../lib/isImage'
 import { alpha, Backdrop } from '@mui/material'
 import config from '../../config'
 import { useHref } from 'react-router-dom'
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import 'react-pdf/dist/esm/Page/TextLayer.css';
+
 import '../../App.css'
 import FileViewer from 'react-file-viewer';
 import TextFileViewer from "./TextFileViewer";

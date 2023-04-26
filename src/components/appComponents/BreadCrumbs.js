@@ -24,12 +24,21 @@ const BreadCrumbs = ({ setSkipFalse }) => {
         setCrumbArray(tempCrumbs)
     }, [crumb])
 
+    const updateBrowserURL  = (id) => {
+        var currentUrl = window.location.href;
+        // Modify the URL
+        var newUrl =  '#' + id;
+        // Change the URL without reloading the page
+        window.history.pushState({ path: newUrl }, '', newUrl);
+    }
 
     const handleCrumbClick = (crmb) =>{
         setSkipFalse()
         dispatch(setDelim('/'))
         dispatch(setSearch(crmb['path']))
         dispatch(setCrumb(crmb['path']))
+        updateBrowserURL(crmb['path'])
+
     }
 
     
@@ -38,6 +47,7 @@ const BreadCrumbs = ({ setSkipFalse }) => {
         dispatch(setDelim('/'))
         dispatch(setSearch(''))
         dispatch(setCrumb(''))
+        updateBrowserURL('')
     }
 
   return (

@@ -69,7 +69,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             var result = uri.slice(0, index) + uri.slice(index + search.length);
             return result
         }
-        console.log(uri);
+        // console.log(uri);
         const temp = uri.split('/')
         return temp.pop()
     }
@@ -133,8 +133,8 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                     // console.log(folderName)
                     processedResp.push({Key: element['Prefix']})
                 } else {
-                    console.log('capture me')
-                    console.log(element['Prefix'])
+                    
+                    // console.log(element['Prefix'])
                     
                 }
                 
@@ -155,11 +155,11 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                 } 
                 else 
                 if (isfolder(element['Key'])) {
-                    console.log('folder')
+                    // console.log('folder')
                     processedResp.push({Key: element['Key']})
                 } 
                 else {
-                    console.log('found')
+                    // console.log('found')
                     processedResp.push({Key: element['Key'], Size: element['Size'], LastModified: element['LastModified']})  
                 }
                 
@@ -181,7 +181,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         var currentUrl = window.location.href;
 
         // Modify the URL
-        var newUrl = currentUrl + '#' + id;
+        var newUrl =  '#' + id;
 
         // Change the URL without reloading the page
         window.history.pushState({ path: newUrl }, '', newUrl);
@@ -195,11 +195,12 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             setImg(id)
             setOpen(true)
         })
+
         // console.log('id: '+id);
         //handles double click of a columb and queries a file 
         //if the double clicked columb is a file
         if(id.slice(-1) === '/'){
-            console.log(id.slice(-1));
+            // console.log(id.slice(-1));
             setSkipFalse()
             dispatch(setDelim('/'))
             dispatch(setSearch(id))
@@ -210,7 +211,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             setOpen(true)
            // handleToggle()
         }
-        // updateBrowserURL(id)
+        updateBrowserURL(id)
     }
 
     const handleNavigationClick = (img, direction) => {
@@ -236,9 +237,8 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         setOpen(false)
         setImg('')
     }
+
     const handleToggle = () => {setOpen(!open);}
-
-
     //**********Api Logic**********
     const {
         data: resp,
@@ -250,6 +250,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         skip: skip,})
 
     useEffect(() => {
+    
         //low level handling of api response
         if(isSuccess){
             processResp(resp)
@@ -333,13 +334,17 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             checkboxSelection= {true}
             getRowId={row => row.Key}
             onSelectionModelChange={(id) => {
+
                 {/*handles the selction of rows*/}
                 const selectedIDs = new Set(id)
                 const selectedRowData = response.filter((row) =>
                 selectedIDs.has(row.Key))
                 dispatch(setSelectedList(selectedRowData))
             }}
-            onRowClick={(row) => {handleCellDoubleClick(row['id'])}}
+            onRowClick={(row) => {handleCellDoubleClick(row['id']);
+           } 
+        } 
+
             // onCellClick   onCellDoubleClick  onRowClick
             getRowClassName={(params) => 
                 params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'}

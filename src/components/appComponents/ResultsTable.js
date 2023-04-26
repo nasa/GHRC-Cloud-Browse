@@ -8,13 +8,17 @@ import { setDelim } from '../../feature/delimSlice'
 import { setSearch } from '../../feature/searchSlice'
 import { setCrumb } from '../../feature/crumbSlice'
 import { isImage } from '../../lib/isImage'
-import { alpha, Backdrop, Box } from '@mui/material'
+import { alpha, Backdrop } from '@mui/material'
 import config from '../../config'
 import { useHref } from 'react-router-dom'
 
+import '../../App.css'
+import FileViewer from 'react-file-viewer';
+import TextFileViewer from "./TextFileViewer";
+import printJS from 'print-js';
+import {FaDownload, FaPrint, FaArrowLeft, FaArrowRight, FaTimes} from "react-icons/fa";
 //**********variable and class delarations**********/
 const parser = new XMLParser()
-
 
 //**********React component**********
 const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
@@ -23,43 +27,41 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     const search = useSelector(state => state.search.value)
     const delim = useSelector(state => state.delim.value)
     const dispatch = useDispatch()
-    const [response, setResponse] = useState([]) 
+    const [response, setResponse] = useState([])
     const [open, setOpen] = useState(false)
     const [img, setImg] = useState('')
-
-
+    const [filePath, setFilePath] = useState();
+    const [sortedData, setSortedData] = useState([]);
+    const [showArrow, setShowArrow] = useState(true);
+    const [sortOrder, setSortOrder] = useState('asc')
     //*********************table Layout **************** */
     const granColumns = [
         //columbs layout for when granules are returned
         {
-            field: 'name', 
+            field: 'Key',
             headerName: 'Name', 
             flex: 3,
+            sortingOrder: ['desc', 'asc'],
             valueGetter: (params) => 
             `${getFName(params.row.Key)}`
         },
         {
             field: 'fileType',
             headerName: 'File Type',
+            sortable: false,
             flex: 0.5,
             valueGetter: (params) => `${getFType(params.row.Key)}`
         },
-        {field: 'LastModified', headerName: 'Last Modified', flex: 2, type: 'dateTime',
+        {field: 'LastModified', headerName: 'Last Modified', sortable: false, flex: 2, type: 'dateTime',
             valueGetter: ({value}) => value && new Date(value)},
-        {field: 'Size', headerName: 'Size', flex: 1, valueGetter: (params) => `${getFSize(params.row.Size)}`},
-    ]
 
-
-    const fileColumns = [
-        //columbs layout for when folders are returned
-        {field: 'Prefix', headerName: 'Folder Name', flex: 1},
+        {field: 'Size', headerName: 'Size', flex: 1, sortable: false, valueGetter: (params) => `${getFSize(params.row.Size)}`},
     ]
 
 
     //**************Table Layout Functions*************** */
     const getFName = (uri) => {
         //takes in a uri and return granule name
-        
         if(uri === undefined){return 'Loading'}
 
         if(uri.slice(-1) === '/'){
@@ -165,8 +167,12 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
    
         }
 
-        console.log(processedResp)
-        setResponse(processedResp)
+        if(sortOrder === 'asc'){
+            setResponse([...processedResp].sort((a, b) => a['Key'].localeCompare(b['Key'])))
+        }else{
+            setResponse([...processedResp].sort((a, b) => a['Key'].localeCompare(b['Key'])).reverse())
+        }
+
         setSkipTrue()
 
     }
@@ -184,7 +190,12 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
 
 
     const handleCellDoubleClick  = (id) => {
-        
+        // File preview
+        setFilePath(`${config.cloudWatchUrlBase}${id}`, ()=>{
+            setImg(id)
+            setOpen(true)
+        })
+
         // console.log('id: '+id);
         //handles double click of a columb and queries a file 
         //if the double clicked columb is a file
@@ -194,28 +205,40 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             dispatch(setDelim('/'))
             dispatch(setSearch(id))
             dispatch(setCrumb(id))
-            
-
 
         } else if (isImage(id)){
             setImg(id)
-            handleToggle()
+            setOpen(true)
+           // handleToggle()
         }
         updateBrowserURL(id)
     }
 
+    const handleNavigationClick = (img, direction) => {
+        const currentImageIndex = response.findIndex((row2) => row2.Key === img);
+        if(direction === 'left'){
+            if(currentImageIndex > 0){
+                const id = response[currentImageIndex-1].Key
+                setFilePath(`${config.cloudWatchUrlBase}${id}`)
+                setImg(id)
+                setOpen(true)
+            }
+        }else if(direction === 'right'){
+            if(response && response.length > currentImageIndex+1){
+                const id = response[currentImageIndex+1].Key
+                setFilePath(`${config.cloudWatchUrlBase}${id}`)
+                setImg(id)
+                setOpen(true)
+            }
+        }
+    }
 
     const handleClose = () => {
         setOpen(false)
         setImg('')
     }
-    const handleToggle = () => {setOpen(!open);} 
-    
-    const chk = () => {
-       
-      
-        
-    }
+
+    const handleToggle = () => {setOpen(!open);}
     //**********Api Logic**********
     const {
         data: resp,
@@ -230,14 +253,14 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     
         //low level handling of api response
         if(isSuccess){
-            processResp(resp)      
+            processResp(resp)
         } else if(isError){
-            console.log(error)
+            console.log("")
             if(error.includes('404')) {href('/404')}
         }
     }, [resp])
 
-    
+
     const useMyHref = (to) => {useHref(to)}
     const href = useMyHref
 
@@ -245,6 +268,44 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     //**********data table styling
     const ODD_OPACITY = 0.2
 
+   //Download file after viewing
+    const downloadFile = (fileUrl) => {
+        fetch(fileUrl)
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(new Blob([blob]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', fileUrl.split('/').pop());
+                document.body.appendChild(link);
+                link.click();
+                link.parentNode.removeChild(link);
+            });
+    };
+
+    const checkFormat = isImage(img) === 'pdf' || isImage(img) === 'jpeg' || isImage(img) === 'png' || isImage(img) === 'gif';
+
+    useEffect(() => {
+        if(sortedData && sortedData.length > 0){
+            setResponse(sortedData);
+        }
+    }, [sortedData]);
+
+    const handleSortModelChange = (model) => {
+        if(model[0]){
+            const field = model[0].field;
+            const order = model[0].sort;
+            let local = [...response]
+           if (order === 'asc') {
+               local.sort((a, b) => a['Key'].localeCompare(b['Key']));
+               setSortOrder('asc')
+            } else {
+               setSortOrder('desc')
+               local.sort((a, b) => a['Key'].localeCompare(b['Key'])).reverse();
+           }
+            setSortedData(local)
+        }
+    };
 
     //**********jsx html**********
   return (
@@ -268,6 +329,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             }}
             rows={response}
             columns={granColumns}
+            disableColumnMenu={true}
             rowsPerPageOptions={[10, 25, 50, 100]}
             checkboxSelection= {true}
             getRowId={row => row.Key}
@@ -280,21 +342,67 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                 dispatch(setSelectedList(selectedRowData))
             }}
             onRowClick={(row) => {handleCellDoubleClick(row['id']);
-           }
-            
+           } 
         } 
+
             // onCellClick   onCellDoubleClick  onRowClick
             getRowClassName={(params) => 
                 params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'}
+            onSortModelChange={handleSortModelChange}
+
         />
         <Backdrop
             sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
             open={open}
-            onClick={handleClose}
         >
-            <Box component='img'
-                src={!isImage(img) ? '' :`${config.cloudWatchUrlBase}${img}`} 
-                />
+            {checkFormat?
+                <div style={{ height: "100%", width: "100%", "text-align":"center" }}>
+                    <span /*style={{ float: 'right' }}*/ className={'topRight'}>
+                        {showArrow? <FaArrowLeft className={'cursorPtr'} title={"prev"} size={32} onClick={(e)=> handleNavigationClick(img, 'left')}/>:""}
+                            <span className={'printIcon'}>
+                                <button className={'downPrint'} onClick={() =>   printJS({printable: `${config.cloudWatchUrlBase}${img}`, type: isImage(img) !== 'pdf' ? 'image':'pdf'})}><FaPrint className="fa-download-print" size={32} title="Print" /></button>
+                            </span>
+                            <span className={'printIcon'}>
+                                <button className={'downPrint'} onClick={() => downloadFile(`${config.cloudWatchUrlBase}${img}`)}><FaDownload className="fa-download-print" size={32} title="Download" /></button>
+                            </span>
+                            <FaTimes onClick={handleClose} title={'Close'} className={'printIcon downPrint'} size={36}/>
+                        {showArrow? <FaArrowRight className={'printIcon cursorPtr'} title={"next"} size={32} onClick={(e)=> handleNavigationClick(img, 'right')}/>:""}
+                        </span>
+                    <h2 className="file-name"> {`${config.cloudWatchUrlBase}${img}`.split('/').pop()}
+
+                    </h2>
+                    <span>
+                    <FileViewer
+                        key={filePath}
+                        fileType={isImage(img)}
+                        filePath={filePath}
+                        zoom = {150}
+                        errorComponent={() => <div>Sorry, we could not load the document.</div>}
+                    />
+
+                    </span></div>:""
+            }
+            {
+                !checkFormat && isImage(img) === 'text'? <TextFileViewer fileUrl={`${config.cloudWatchUrlBase}${img}`} setOpen={setOpen} setImg={setImg} img={img} response={response} setFilePath={setFilePath} showArrow={showArrow}/>:''
+            }
+            {
+                !checkFormat && isImage(img) !== 'text'?
+                    <div style={{ "text-align":"center" , top: "50%", left: "50%"}}>
+                        <h2 className="file-name"> {`${config.cloudWatchUrlBase}${img}`.split('/').pop()}
+                            <span /*style={{ float: 'right' }}*/>
+                                <span className={'printIcon'}>
+                                   {isImage(img)? <button className={'downPrint'} onClick={() => downloadFile(`${config.cloudWatchUrlBase}${img}`)}><FaDownload className="fa-download-print" size={40} title="Download" /></button>:"Folder"}
+                                </span>
+                            </span>
+
+                        </h2>
+                        <span /*style={{ float: 'right' }}*/ className={'topRight'}>
+                        {showArrow?<FaArrowLeft className={'printIcon cursorPtr'} title={"prev"} size={32} onClick={(e)=> handleNavigationClick(img, 'left')}/>:""}
+                        <FaTimes onClick={handleClose} title={'Close'} className={'printIcon downPrint'} size={36}/>
+                            {showArrow?<FaArrowRight className={'printIcon cursorPtr'} title={"next"} size={32} onClick={(e)=> handleNavigationClick(img, 'right')}/>:""}
+                        </span>
+                        </div>:""
+            }
         </Backdrop>
 </div>
   )

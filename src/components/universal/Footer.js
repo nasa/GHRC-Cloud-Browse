@@ -33,8 +33,8 @@ export const Footer = () => {
           <Typography variant='caption'>
             NASA Official:
           </Typography>
-          <Link target='_blank' href='mailto:manil.maskey@nasa.gov' variant='caption' color='inherit' underline='hover'>
-            {' Manil Manskey'}
+          <Link target='_blank' href='mailto:aaron.s.kaulfus@nasa.gov' variant='caption' color='inherit' underline='hover'>
+            {' Aaron Kaulfus '}
           </Link>
           <Link target='_blank' href='http://www.nasa.gov/about/highlights/HP_Privacy.html' 
           variant='caption' color='inherit' underline='hover' sx={{ml:2}}>

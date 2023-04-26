@@ -62,7 +62,6 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     //**************Table Layout Functions*************** */
     const getFName = (uri) => {
         //takes in a uri and return granule name
-        
         if(uri === undefined){return 'Loading'}
 
         if(uri.slice(-1) === '/'){
@@ -255,7 +254,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         if(isSuccess){
             processResp(resp)
         } else if(isError){
-            console.log(error)
+            console.log("")
             if(error.includes('404')) {href('/404')}
         }
     }, [resp])
@@ -286,7 +285,9 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     const checkFormat = isImage(img) === 'pdf' || isImage(img) === 'jpeg' || isImage(img) === 'png' || isImage(img) === 'gif';
 
     useEffect(() => {
-        setResponse(sortedData);
+        if(sortedData && sortedData.length > 0){
+            setResponse(sortedData);
+        }
     }, [sortedData]);
 
     const handleSortModelChange = (model) => {

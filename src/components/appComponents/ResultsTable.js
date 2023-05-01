@@ -17,11 +17,25 @@ import FileViewer from 'react-file-viewer';
 import TextFileViewer from "./TextFileViewer";
 import printJS from 'print-js';
 import {FaDownload, FaPrint, FaArrowLeft, FaArrowRight, FaTimes} from "react-icons/fa";
+
+import { Viewer, Worker } from "@react-pdf-viewer/core";
+import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
+import * as pdfjs from "pdfjs-dist";
+import { toolbarPlugin, ToolbarSlot } from '@react-pdf-viewer/toolbar';
+
+import "@react-pdf-viewer/core/lib/styles/index.css";
+import "@react-pdf-viewer/default-layout/lib/styles/index.css";
+
+
+
 //**********variable and class delarations**********/
 const parser = new XMLParser()
 
 //**********React component**********
 const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
+    const workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+    const toolbarPluginInstance = toolbarPlugin();
+    const { Toolbar } = toolbarPluginInstance;
 
     //**********State Variables**********
     const search = useSelector(state => state.search.value)
@@ -283,7 +297,9 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             });
     };
 
-    const checkFormat = isImage(img) === 'pdf' || isImage(img) === 'jpeg' || isImage(img) === 'png' || isImage(img) === 'gif';
+    const checkFormat = isImage(img) === 'jpeg' || isImage(img) === 'png' || isImage(img) === 'gif';
+    const checkPdf = isImage(img) === 'pdf'
+
 
     useEffect(() => {
         if(sortedData && sortedData.length > 0){
@@ -306,6 +322,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             setSortedData(local)
         }
     };
+
 
     //**********jsx html**********
   return (
@@ -383,10 +400,113 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                     </span></div>:""
             }
             {
+                !checkFormat && checkPdf ? <div style={{ "text-align":"center" }}>
+                    <span className={'topCenter'}><h2 className="file-name"> {`${config.cloudWatchUrlBase}${img}`.split('/').pop()}
+
+                    </h2></span>
+                    <span /*style={{ float: 'right' }}*/ className={'topRight'}>
+                        {showArrow? <FaArrowLeft className={'cursorPtr'} title={"prev"} size={32} onClick={(e)=> handleNavigationClick(img, 'left')}/>:""}
+                        <span className={'printIcon'}>
+                                <button className={'downPrint'} onClick={() =>   printJS({printable: `${config.cloudWatchUrlBase}${img}`, type: isImage(img) !== 'pdf' ? 'image':'pdf'})}><FaPrint className="fa-download-print" size={32} title="Print" /></button>
+                            </span>
+                            <span className={'printIcon'}>
+                                <button className={'downPrint'} onClick={() => downloadFile(`${config.cloudWatchUrlBase}${img}`)}><FaDownload className="fa-download-print" size={32} title="Download" /></button>
+                            </span>
+                            <FaTimes onClick={handleClose} title={'Close'} className={'printIcon downPrint'} size={36}/>
+                        {showArrow? <FaArrowRight className={'printIcon cursorPtr'} title={"next"} size={32} onClick={(e)=> handleNavigationClick(img, 'right')}/>:""}
+                        </span>
+                     </div>:""
+            }
+            {
+                !checkFormat && checkPdf ? <Worker workerUrl={workerSrc}> <div
+                    className="rpv-core__viewer"
+                    style={{
+                        border: '1px solid rgba(0, 0, 0, 0.3)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        height: '80%',
+                        width: '70%'
+                    }}
+                >
+                    <div
+                        style={{
+                            alignItems: 'center',
+                            backgroundColor: '#eeeeee',
+                            borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+                            display: 'flex',
+                            padding: '4px',
+                        }}
+                    >
+                        <Toolbar>
+                            {(props) => {
+                                const {
+                                    CurrentPageInput,
+                                    EnterFullScreen,
+                                    GoToNextPage,
+                                    GoToPreviousPage,
+                                    NumberOfPages,
+                                    ShowSearchPopover,
+                                    Zoom,
+                                    ZoomIn,
+                                    ZoomOut,
+                                } = props;
+                                return (
+                                    <>
+
+                                        <div style={{ padding: '0px 2px' }}>
+                                            <ShowSearchPopover />
+                                        </div>
+                                        <div style={{ padding: '0px 2px', marginLeft: 'auto' }}>
+                                            <EnterFullScreen />
+                                        </div>
+                                        <div style={{ padding: '0px 2px' }}>
+                                            <ZoomOut />
+                                        </div>
+
+                                        <div style={{ padding: '0px 2px' }}>
+                                            <Zoom />
+                                        </div>
+                                        <div style={{ padding: '0px 2px' }}>
+                                            <ZoomIn />
+                                        </div>
+                                        <div style={{ padding: '0px 2px', marginLeft: 'auto' }}>
+                                            <GoToPreviousPage />
+                                        </div>
+                                        <div style={{ padding: '0px 2px', width: '4rem' }}>
+                                            <CurrentPageInput />
+                                        </div>
+                                        <div style={{ padding: '0px 2px', color: 'black' }}>
+                                            / <NumberOfPages />
+                                        </div>
+                                        <div style={{ padding: '0px 2px' }}>
+                                            <GoToNextPage />
+                                        </div>
+
+                                    </>
+                                );
+                            }}
+                        </Toolbar>
+                    </div>
+                    <div
+                        style={{
+                            flex: 1,
+                            overflow: 'hidden',
+                        }}
+                    >
+                        <Viewer
+                            fileUrl={`${config.cloudWatchUrlBase}${img}`}
+                            plugins={[toolbarPluginInstance]}
+                            defaultScale={1.25}
+                        />
+                    </div>
+                </div></Worker>
+                    :""
+            }
+            {
                 !checkFormat && isImage(img) === 'text'? <TextFileViewer fileUrl={`${config.cloudWatchUrlBase}${img}`} setOpen={setOpen} setImg={setImg} img={img} response={response} setFilePath={setFilePath} showArrow={showArrow}/>:''
             }
             {
-                !checkFormat && isImage(img) !== 'text'?
+                !checkFormat && !checkPdf && isImage(img) !== 'text'?
                     <div style={{ "text-align":"center" , top: "50%", left: "50%"}}>
                         <h2 className="file-name"> {`${config.cloudWatchUrlBase}${img}`.split('/').pop()}
                             <span /*style={{ float: 'right' }}*/>

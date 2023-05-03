@@ -53,10 +53,10 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         //columbs layout for when granules are returned
         {
             field: 'Key',
-            headerName: 'Name', 
+            headerName: 'Name',
             flex: 3,
             sortingOrder: ['desc', 'asc'],
-            valueGetter: (params) => 
+            valueGetter: (params) =>
             `${getFName(params.row.Key)}`
         },
         {
@@ -103,7 +103,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         // XML parser may return a object on single occurence, this captures the edge case
         if(!Array.isArray(data)){
            var tmpObject = [data]
-           return tmpObject   
+           return tmpObject
         }
         return data
     }
@@ -134,9 +134,9 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
 
         // console.log(json['ListBucketResult']['Prefix'])
         if(json['ListBucketResult']['CommonPrefixes'])
-        { 
+        {
             responseFolder= convertToList(json['ListBucketResult']['CommonPrefixes'])
-            
+
             responseFolder.forEach(element => {
                 if(element['Prefix'] === json['ListBucketResult']['Prefix']){
                     // Ignore this folder, as it is the root folder
@@ -147,15 +147,15 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                     // console.log(folderName)
                     processedResp.push({Key: element['Prefix']})
                 } else {
-                    
+
                     // console.log(element['Prefix'])
-                    
+
                 }
-                
+
             });
-           
-        } 
-        
+
+        }
+
         if(json['ListBucketResult']['Contents']){
             // console.log('here')
             responseObject = convertToList(json['ListBucketResult']['Contents'])
@@ -166,19 +166,19 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                 if(element['Size'] === 0){
                     // Ignore this folder, as it is the root folder
                     console.log(element['Key'])
-                } 
-                else 
+                }
+                else
                 if (isfolder(element['Key'])) {
                     // console.log('folder')
                     processedResp.push({Key: element['Key']})
-                } 
+                }
                 else {
                     // console.log('found')
-                    processedResp.push({Key: element['Key'], Size: element['Size'], LastModified: element['LastModified']})  
+                    processedResp.push({Key: element['Key'], Size: element['Size'], LastModified: element['LastModified']})
                 }
-                
+
             });
-   
+
         }
 
         if(sortOrder === 'asc'){
@@ -196,7 +196,6 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
 
         // Modify the URL
         var newUrl =  '#' + id;
-
         // Change the URL without reloading the page
         window.history.pushState({ path: newUrl }, '', newUrl);
     }
@@ -211,7 +210,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         })
 
         // console.log('id: '+id);
-        //handles double click of a columb and queries a file 
+        //handles double click of a columb and queries a file
         //if the double clicked columb is a file
         if(id.slice(-1) === '/'){
             // console.log(id.slice(-1));
@@ -264,7 +263,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         skip: skip,})
 
     useEffect(() => {
-    
+
         //low level handling of api response
         if(isSuccess){
             processResp(resp)
@@ -307,6 +306,16 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         }
     }, [sortedData]);
 
+    const [divHeight, setDivHeight] = useState(window.innerHeight - 450);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setDivHeight(window.innerHeight - 450);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     const handleSortModelChange = (model) => {
         if(model[0]){
             const field = model[0].field;
@@ -326,7 +335,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
 
     //**********jsx html**********
   return (
-    <div style={{height: 635, width: '90%'}}>
+    <div style={{height:  `${divHeight}px`, width: '90%'}}>
         <DataGrid
             sx={{
                 '& .MuiDataGrid-cell:hover':{cursor:'pointer'},
@@ -359,11 +368,11 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                 dispatch(setSelectedList(selectedRowData))
             }}
             onRowClick={(row) => {handleCellDoubleClick(row['id']);
-           } 
-        } 
+           }
+        }
 
             // onCellClick   onCellDoubleClick  onRowClick
-            getRowClassName={(params) => 
+            getRowClassName={(params) =>
                 params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'}
             onSortModelChange={handleSortModelChange}
 

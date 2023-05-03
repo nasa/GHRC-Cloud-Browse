@@ -71,10 +71,30 @@
     cursor: pointer;
 
 }
+
 .topLeft {
     position: absolute;
     top: 20px;
     left: 100px;
     cursor: pointer;
 
+}
+
+.topCenter {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    cursor: pointer;
+    right: 0px;
+
+}
+
+.app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex-grow: 1;
 }

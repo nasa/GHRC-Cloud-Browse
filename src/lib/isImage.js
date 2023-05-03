@@ -1,6 +1,7 @@
 
 
 export const isImage = (gran) =>{
+    console.log('gran.split(\'.\').pop()',gran.split('.').pop())
     switch (gran.split('.').pop()) {
         case 'jpg':
             return 'jpeg'
@@ -16,6 +17,8 @@ export const isImage = (gran) =>{
             return 'json'
         case 'doc':
             return 'doc'
+        case 'nc':
+            return 'nc'
         default:
             return false
     }

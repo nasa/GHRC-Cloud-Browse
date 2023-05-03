@@ -15,16 +15,23 @@ const root = createRoot(document.getElementById('root'))
 root.render(
     <React.StrictMode>
         <Provider store={store}>
-        <div>
-            <CssBaseline />
-            <TopBar />
+        <div className="app">
+            <header>
+                <CssBaseline />
+                <TopBar />
+            </header>
+            <main>
+
             <BrowserRouter>
                 <Routes>
                     <Route path='/' element={<App />} />
                     <Route path='/browseui/404' element={<PageNotFound />} />
                 </Routes>
             </BrowserRouter>
+            </main>
+            <footer>
             <Footer />
+            </footer>
         </div>
         </Provider>
     </React.StrictMode>,

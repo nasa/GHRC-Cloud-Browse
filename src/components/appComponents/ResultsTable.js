@@ -201,6 +201,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         //if the double clicked columb is a file
         if(id.slice(-1) === '/'){
             // console.log(id.slice(-1));
+            var displayString = id.replace("pub/", "");
             setSkipFalse()
             dispatch(setDelim('/'))
             dispatch(setSearch(id))

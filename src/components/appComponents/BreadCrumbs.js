@@ -33,19 +33,23 @@ const BreadCrumbs = ({ setSkipFalse }) => {
     }
 
     const handleCrumbClick = (crmb) =>{
+        console.log(crmb)
+        var displayString = crmb['path'].replace("pub/", "");
+        console.log(displayString)
         setSkipFalse()
         dispatch(setDelim('/'))
         dispatch(setSearch(crmb['path']))
-        dispatch(setCrumb(crmb['path']))
-        updateBrowserURL(crmb['path'])
+        dispatch(setCrumb(displayString))
+        updateBrowserURL(displayString)
 
     }
 
     
     const handleRootClick = () =>{
+        console.log('Execute')
         setSkipFalse()
         dispatch(setDelim('/'))
-        dispatch(setSearch(''))
+        dispatch(setSearch('pub/'))
         dispatch(setCrumb(''))
         updateBrowserURL('')
     }

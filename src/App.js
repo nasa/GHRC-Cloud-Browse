@@ -27,12 +27,13 @@ const App = () => {
 
   // console.log(url.split('#')[1]);  
   useEffect(() => {
-    if(params !== undefined){
+    if(params !== undefined && params !==''){
+      var displayString = params.replace("pub/", "");
       setSkipFalse()
       dispatch(setDelim('/'))
       console.log(params);
       dispatch(setSearch(params))
-      dispatch(setCrumb(params))
+      dispatch(setCrumb(displayString))
 
       if (isImage(params)){
         console.log('in')

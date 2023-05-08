@@ -11,6 +11,8 @@ export const isImage = (gran) =>{
             return 'gif'
         case 'pdf':
             return 'pdf'
+        case 'tif':
+            return 'tiff'
         case 'txt':
             return 'text'
         case 'json':
@@ -19,6 +21,10 @@ export const isImage = (gran) =>{
             return 'doc'
         case 'nc':
             return 'nc'
+        case 'tar':
+            return 'tar'
+        case 'gz':
+            return 'gz'
         default:
             return false
     }

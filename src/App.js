@@ -25,15 +25,14 @@ const App = () => {
   const [open, setOpen] = useState(false)
     const [img, setImg] = useState('')
 
-  // console.log(url.split('#')[1]);  
+  // console.log(url.split('#')[1]);
   useEffect(() => {
     if(params !== undefined && params !==''){
-      var displayString = params.replace("pub/", "");
       setSkipFalse()
       dispatch(setDelim('/'))
       console.log(params);
       dispatch(setSearch(params))
-      dispatch(setCrumb(displayString))
+      dispatch(setCrumb(params))
 
       if (isImage(params)){
         console.log('in')
@@ -41,7 +40,7 @@ const App = () => {
         handleToggle()
     }
       // dispatch(setCrumb(params))
-      
+
     }
 
   }, [params])
@@ -49,8 +48,8 @@ const App = () => {
     setOpen(false)
     setImg('')
 }
-const handleToggle = () => {setOpen(!open);} 
-  
+const handleToggle = () => {setOpen(!open);}
+
   return (
     <>
       <Box display='flex' justifyContent='center' margin={2}>
@@ -70,7 +69,7 @@ const handleToggle = () => {setOpen(!open);}
             onClick={handleClose}
         >
             <Box component='img'
-                src={!isImage(img) ? '' :`${config.cloudWatchUrlBase}${img}`} 
+                src={!isImage(img) ? '' :`${config.cloudWatchUrlBase}${img}`}
                 />
         </Backdrop>
     </>

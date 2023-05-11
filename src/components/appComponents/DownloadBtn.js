@@ -21,7 +21,7 @@ const DownloadBtn = ({setShow}) => {
                         saveAs(blob, link['Key'].split('/').pop())
                     })
             }else{
-                setShow(false)
+                setShow(true)
             }
         })
     }

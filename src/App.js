@@ -69,7 +69,7 @@ const handleToggle = () => {setOpen(!open);}
     <>
         {show && (
             <div className={`alert alert-danger alert-dismissible fade show`} role="alert">
-                <strong>Warning !! We Do Not Support Folder Download !!</strong>
+                <strong>NOTICE: Folder Download Not Supported At This Time</strong>
                 <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close" onClick={handleAlert}>X</button>
             </div>
         )}

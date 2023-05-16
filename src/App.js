@@ -12,8 +12,10 @@ import { setCrumb } from './feature/crumbSlice'
 import { isImage } from './lib/isImage'
 import config from './config'
 import { alpha, Backdrop } from '@mui/material'
+
 const App = () => {
   const [skip, setSkip] = useState(false)
+  const [show, setShow] = useState(false)
 
   const setSkipTrue = () =>{setSkip(true)}
   const setSkipFalse = () =>{setSkip(false)}
@@ -48,15 +50,34 @@ const App = () => {
     setOpen(false)
     setImg('')
 }
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setShow(false);
+        }, 5000);
+        return () => clearTimeout(timer);
+    }, [show]);
+
+
+    const handleAlert = () => {
+        setShow(false);
+    };
+
 const handleToggle = () => {setOpen(!open);}
 
   return (
     <>
+        {show && (
+            <div className={`alert alert-danger alert-dismissible fade show`} role="alert">
+                <strong>NOTICE: Folder Download Not Supported At This Time</strong>
+                <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close" onClick={handleAlert}>X</button>
+            </div>
+        )}
       <Box display='flex' justifyContent='center' margin={2}>
         <SearchBar setSkipFalse={setSkipFalse} />
       </Box>
       <Box display='flex'>
-        <DownloadBtn />
+        <DownloadBtn  setShow={setShow}/>
         <GetURLBtn />
       </Box>
       <BreadCrumbs setSkipFalse={setSkipFalse}/>

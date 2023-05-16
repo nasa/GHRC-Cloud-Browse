@@ -64,7 +64,7 @@ function TextFileViewer({ fileUrl, setOpen, setImg, img, response, setFilePath, 
     };
 
     return (
-        <div style={{ height: "100%", "text-align":"center" }}>
+        <div style={{ height: "100%", "textAlign":"center" }}>
             <h2 className="file-name">{fileUrl.split('/').pop()}
             <span className={'topRight'}>
                  {showArrow? <FaArrowLeft className={'printIcon cursorPtr'} title={"prev"} size={32} onClick={(e)=> handleArrow(img,'l')}/>:""}

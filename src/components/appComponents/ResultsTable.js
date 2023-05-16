@@ -127,7 +127,6 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         const xml = resp
         const json = parser.parse(xml)
         console.log(json)
-        var jResp;
         var responseFolder;
         var responseObject;
         var processedResp = []
@@ -143,7 +142,6 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                     processedResp.push({Key: element['Prefix']})
                 } else if (isfolder(element['Prefix'])) {
                     // console.log(element['Prefix'].split('/').reverse()[1])
-                    var folderName = element['Prefix'].split('/').reverse()[1]
                     // console.log(folderName)
                     processedResp.push({Key: element['Prefix']})
                 } else {
@@ -165,7 +163,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                 // processedResp.push({Key: element['Key'], Size: element['Size'], LastModified: element['LastModified']})
                 if(element['Size'] === 0){
                     // Ignore this folder, as it is the root folder
-                    console.log(element['Key'])
+                    // console.log(element['Key'])
                 }
                 else
                 if (isfolder(element['Key'])) {
@@ -192,10 +190,9 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     }
 
     const updateBrowserURL  = (id) => {
-        var currentUrl = window.location.href;
 
         // Modify the URL
-        var newUrl =  '#' + id;
+        var newUrl =  'browseui/#' + id;
         // Change the URL without reloading the page
         window.history.pushState({ path: newUrl }, '', newUrl);
     }
@@ -214,7 +211,6 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         //if the double clicked columb is a file
         if(id.slice(-1) === '/'){
             // console.log(id.slice(-1));
-            var displayString = id.replace("pub/", "");
             setSkipFalse()
             dispatch(setDelim('/'))
             dispatch(setSearch(id))
@@ -252,7 +248,6 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         setImg('')
     }
 
-    const handleToggle = () => {setOpen(!open);}
     //**********Api Logic**********
     const {
         data: resp,
@@ -319,7 +314,6 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
 
     const handleSortModelChange = (model) => {
         if(model[0]){
-            const field = model[0].field;
             const order = model[0].sort;
             let local = [...response]
            if (order === 'asc') {
@@ -383,9 +377,9 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             open={open}
         >
             {checkFormat?
-                <div style={{ height: "100%", width: "100%", "text-align":"center" }}>
+                <div style={{ height: "100%", width: "100%", "textAlign":"center" }}>
                     <span /*style={{ float: 'right' }}*/ className={'topRight'}>
-                        {showArrow? <FaArrowLeft className={'cursorPtr'} title={"prev"} size={32} onClick={(e)=> handleNavigationClick(img, 'left')}/>:""}
+                        {showArrow? <FaArrowLeft className={'cursorPtr'} title={"prev"} size={32} onClick={()=> handleNavigationClick(img, 'left')}/>:""}
                             <span className={'printIcon'}>
                                 <button className={'downPrint'} onClick={() =>   printJS({printable: `${config.cloudWatchUrlBase}${img}`, type: isImage(img) !== 'pdf' ? 'image':'pdf'})}><FaPrint className="fa-download-print" size={32} title="Print" /></button>
                             </span>
@@ -393,7 +387,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                                 <button className={'downPrint'} onClick={() => downloadFile(`${config.cloudWatchUrlBase}${img}`)}><FaDownload className="fa-download-print" size={32} title="Download" /></button>
                             </span>
                             <FaTimes onClick={handleClose} title={'Close'} className={'printIcon downPrint'} size={36}/>
-                        {showArrow? <FaArrowRight className={'printIcon cursorPtr'} title={"next"} size={32} onClick={(e)=> handleNavigationClick(img, 'right')}/>:""}
+                        {showArrow? <FaArrowRight className={'printIcon cursorPtr'} title={"next"} size={32} onClick={()=> handleNavigationClick(img, 'right')}/>:""}
                         </span>
                     <h2 className="file-name"> {`${config.cloudWatchUrlBase}${img}`.split('/').pop()}
 
@@ -410,12 +404,12 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                     </span></div>:""
             }
             {
-                !checkFormat && checkPdf ? <div style={{ "text-align":"center" }}>
+                !checkFormat && checkPdf ? <div style={{ "textAlign":"center" }}>
                     <span className={'topCenter'}><h2 className="file-name"> {`${config.cloudWatchUrlBase}${img}`.split('/').pop()}
 
                     </h2></span>
                     <span /*style={{ float: 'right' }}*/ className={'topRight'}>
-                        {showArrow? <FaArrowLeft className={'cursorPtr'} title={"prev"} size={32} onClick={(e)=> handleNavigationClick(img, 'left')}/>:""}
+                        {showArrow? <FaArrowLeft className={'cursorPtr'} title={"prev"} size={32} onClick={()=> handleNavigationClick(img, 'left')}/>:""}
                         <span className={'printIcon'}>
                                 <button className={'downPrint'} onClick={() =>   printJS({printable: `${config.cloudWatchUrlBase}${img}`, type: isImage(img) !== 'pdf' ? 'image':'pdf'})}><FaPrint className="fa-download-print" size={32} title="Print" /></button>
                             </span>
@@ -423,7 +417,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                                 <button className={'downPrint'} onClick={() => downloadFile(`${config.cloudWatchUrlBase}${img}`)}><FaDownload className="fa-download-print" size={32} title="Download" /></button>
                             </span>
                             <FaTimes onClick={handleClose} title={'Close'} className={'printIcon downPrint'} size={36}/>
-                        {showArrow? <FaArrowRight className={'printIcon cursorPtr'} title={"next"} size={32} onClick={(e)=> handleNavigationClick(img, 'right')}/>:""}
+                        {showArrow? <FaArrowRight className={'printIcon cursorPtr'} title={"next"} size={32} onClick={()=> handleNavigationClick(img, 'right')}/>:""}
                         </span>
                      </div>:""
             }
@@ -517,7 +511,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             }
             {
                 !checkFormat && !checkPdf && isImage(img) !== 'text'?
-                    <div style={{ "text-align":"center" , top: "50%", left: "50%"}}>
+                    <div style={{ "textAlign":"center" , top: "50%", left: "50%"}}>
                         <h2 className="file-name"> {`${config.cloudWatchUrlBase}${img}`.split('/').pop()}
                             <span /*style={{ float: 'right' }}*/>
                                 <span className={'printIcon'}>
@@ -527,9 +521,9 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
 
                         </h2>
                         <span /*style={{ float: 'right' }}*/ className={'topRight'}>
-                        {showArrow?<FaArrowLeft className={'printIcon cursorPtr'} title={"prev"} size={32} onClick={(e)=> handleNavigationClick(img, 'left')}/>:""}
+                        {showArrow?<FaArrowLeft className={'printIcon cursorPtr'} title={"prev"} size={32} onClick={()=> handleNavigationClick(img, 'left')}/>:""}
                         <FaTimes onClick={handleClose} title={'Close'} className={'printIcon downPrint'} size={36}/>
-                            {showArrow?<FaArrowRight className={'printIcon cursorPtr'} title={"next"} size={32} onClick={(e)=> handleNavigationClick(img, 'right')}/>:""}
+                            {showArrow?<FaArrowRight className={'printIcon cursorPtr'} title={"next"} size={32} onClick={()=> handleNavigationClick(img, 'right')}/>:""}
                         </span>
                         </div>:""
             }

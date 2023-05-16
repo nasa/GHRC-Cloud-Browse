@@ -27,7 +27,7 @@ const GetURLBtn = () => {
       };
 
       const handleDownload = () => {
-        var tmp = listOfLinks.current.toString().split(",").join("\n")
+        var tmp = listOfLinks.current.map(itm => itm.source).toString().split(",").join("\n")
         var blob = new Blob([tmp], {type: 'text/plain', endings:'native'});
         const element = document.createElement("a");
         element.href = URL.createObjectURL(blob);
@@ -37,7 +37,14 @@ const GetURLBtn = () => {
       };
 
       const handleCopy = () => {
-        var tmp = listOfLinks.current.toString().split(",").join("\n")
+        
+        var tmp = listOfLinks.current.map(itm => itm.source).toString().split(",").join("\n")
+        navigator.clipboard.writeText(tmp)
+      };
+
+      const handleDashboardCopy = () => {
+        
+        var tmp = listOfLinks.current.map(itm => itm.url).toString().split(",").join("\n")
         navigator.clipboard.writeText(tmp)
       };
     
@@ -57,7 +64,9 @@ const GetURLBtn = () => {
         handleClickOpen()
     }
 
+  
     const downloader = (linkList) => {
+        var sourceIMGUrl = config.sourceIMGUrl;
         var url = window.location.href;
         // var tmpUrl = url.split('#')[0]
         var urlPlain = url.split('#')[0]
@@ -66,25 +75,17 @@ const GetURLBtn = () => {
         }
         
         listOfLinks.current = [];
-
+       
         linkList.forEach((path, i) =>{
-            listOfLinks.current[i] = urlPlain +'#'+path['Key']
+            listOfLinks.current[i] = {
+              url: urlPlain +'#'+ path['Key'],
+              source: sourceIMGUrl + path['Key']
+          
+          }
             
             
         })
         console.log(listOfLinks)
-        // listOfLinks.map((link, index) =>
-        // console.log(link)
-        // // <li>{link}</li> 
-         
-        //  )
-        // linkList.forEach((link) =>{
-        //     fetch(`${config.cloudWatchUrlBase}${link['Key']}`)
-        //         .then(res => res.blob())
-        //         .then(blob => {
-        //             saveAs(blob, link['Key'].split('/').pop())
-        //         })
-        // })
     }
 
 
@@ -116,8 +117,12 @@ const GetURLBtn = () => {
           >
             
         {
-          listOfLinks.current.map((link, index) => 
-            <div> <a href ={link} target="_blank">{link}</a></div>
+          listOfLinks.current.map((itm, index) => 
+            <div> <a href ={itm.source} target="_blank">{itm.source}</a>
+            &nbsp;&nbsp;&nbsp;
+            <a href ={itm.url} target="_blank">[Dashboard]</a>
+            
+            </div>
            
             )
           
@@ -125,6 +130,8 @@ const GetURLBtn = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
+        
+        <Button onClick={handleDashboardCopy}>Copy Dashboard URL to Clipboard</Button>
         <Button onClick={handleCopy}>Copy to Clipboard</Button>
         <Button onClick={handleDownload}>Download as a file</Button>
           <Button onClick={handleClose}>Close</Button>

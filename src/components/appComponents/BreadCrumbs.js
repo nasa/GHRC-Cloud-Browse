@@ -27,7 +27,7 @@ const BreadCrumbs = ({ setSkipFalse }) => {
     const updateBrowserURL  = (id) => {
         var currentUrl = window.location.href;
         // Modify the URL
-        var newUrl =  '#' + id;
+        var newUrl =  'browseui/#' + id;
         // Change the URL without reloading the page
         window.history.pushState({ path: newUrl }, '', newUrl);
     }
@@ -69,15 +69,15 @@ const BreadCrumbs = ({ setSkipFalse }) => {
               <Typography onClick={() => handleRootClick()} sx={{cursor:"pointer"}}>
                   <FaHome/> Root
               </Typography>
-              {crumbArray.map((crmb)=>(
+              {crumbArray.map((crmb, index)=>(
                   crmb['crmb'] !== 'pub'?
-                      <Typography onClick={() => handleCrumbClick(crmb)} sx={{cursor:"pointer"}}>
+                      <Typography key={index} onClick={() => handleCrumbClick(crmb)} sx={{cursor:"pointer"}}>
                           {crmb['crmb']}
                       </Typography>:""
               ))}
               {/*{<span> {crumbArray && crumbArray.length > 1 ? <button className={"backButton"} onClick={() => handleCrumbClick(crumbArray[crumbArray.length -2])}> <FaArrowLeft/> <span>Back</span></button>:
                   crumbArray.length == 2? <button className={"backButton"} onClick={() => handleRootClick()}> <FaArrowLeft/> <span>Back</span></button>:<button className={"backButton disabledButton"} disabled={true}> <FaArrowLeft/> <span>Back</span></button>}
-        </span>}*/}}
+        </span>}*/}
           </Breadcrumbs>
 
       </Box>

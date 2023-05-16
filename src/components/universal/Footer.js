@@ -11,27 +11,27 @@ export const Footer = () => {
             <Box
               sx={{width: 100}}
               component='img' 
-              src='assets/ghrc_logo.png'/>
+              src='/browseui/assets/ghrc_logo.png'/>
             <Box
               sx={{width: 100, ml:4}}
               component='img' 
-              src='assets/itsc_logo.png'/>
+              src='/browseui/assets/itsc_logo.png'/>
           </Grid>
           <Grid item xs={6} display='flex' justifyContent='right'>
             <Box 
                 sx={{height: 60, ml:4, pb:0.5}}
                 component='img' 
-                src='assets/nasa_logo.png'/>
+                src='/browseui/assets/nasa_logo.png'/>
             <Box
               sx={{width: 100, ml:4}}
               component='img' 
-              src='assets/uah_logo.png'/>
+              src='/browseui/assets/uah_logo.png'/>
           </Grid>
         </Grid>
       </Box>
       <Box display='flex' justifyContent='center' marginBottom={2}>
           <Typography variant='caption'>
-            NASA Official:
+            NASA Official: &nbsp;
           </Typography>
           <Link target='_blank' href='mailto:aaron.s.kaulfus@nasa.gov' variant='caption' color='inherit' underline='hover'>
             {' Aaron Kaulfus '}

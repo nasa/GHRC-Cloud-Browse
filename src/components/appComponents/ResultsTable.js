@@ -275,8 +275,8 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         // eslint-disable-next-line
     }, [resp])
 
-
-    const href = (to) => {useHref(to)}
+    const useMyHref = (to) => {useHref(to)}
+    const href = useMyHref
 
 
     //**********data table styling

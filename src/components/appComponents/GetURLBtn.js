@@ -117,14 +117,11 @@ const GetURLBtn = () => {
 
         {
           listOfLinks.current.map((itm) =>
-            <div> <a href ={itm.source} target="_blank">{itm.source}</a>
+            <div> <a href ={itm.source}  rel="noopener noreferrer" target="_blank">{itm.source}</a>
             &nbsp;&nbsp;&nbsp;
-            <a href ={itm.url} target="_blank">[Dashboard]</a>
-
+            <a href ={itm.url}  rel="noopener noreferrer" target="_blank">[Dashboard]</a>
             </div>
-
             )
-
         }
           </DialogContentText>
         </DialogContent>

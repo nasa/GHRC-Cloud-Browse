@@ -44,7 +44,7 @@ function TextFileViewer({ fileUrl, setOpen, setImg, img, response, setFilePath, 
 
     };
 
-    const handleClose = (event) => {
+    const handleClose = () => {
         setOpen(false);
         setImg('')
     };
@@ -55,7 +55,7 @@ function TextFileViewer({ fileUrl, setOpen, setImg, img, response, setFilePath, 
         if( a === 'r'){
             id = response[currentImageIndex+1]?response[currentImageIndex+1].Key:null
         }
-        else if (a == 'l'){
+        else if (a === 'l'){
             id = response[currentImageIndex-1]? response[currentImageIndex-1].Key:null
         }
         setFilePath(`${config.cloudWatchUrlBase}${id}`)
@@ -67,7 +67,7 @@ function TextFileViewer({ fileUrl, setOpen, setImg, img, response, setFilePath, 
         <div style={{ height: "100%", "textAlign":"center" }}>
             <h2 className="file-name">{fileUrl.split('/').pop()}
             <span className={'topRight'}>
-                 {showArrow? <FaArrowLeft className={'printIcon cursorPtr'} title={"prev"} size={32} onClick={(e)=> handleArrow(img,'l')}/>:""}
+                 {showArrow? <FaArrowLeft className={'printIcon cursorPtr'} title={"prev"} size={32} onClick={()=> handleArrow(img,'l')}/>:""}
                  <span className={'printIcon'}>
                 <button className={'downPrint'} onClick={printFile}><FaPrint className="fa-download-print" title="Print" size={32}/></button>
                  </span>
@@ -76,7 +76,7 @@ function TextFileViewer({ fileUrl, setOpen, setImg, img, response, setFilePath, 
                       </span>
 
                         <FaTimes onClick={handleClose} title={'Close'} className={'printIcon downPrint'} size={36}/>
-                {showArrow? <FaArrowRight className={'printIcon cursorPtr'} title={"next"} size={32} onClick={(e)=> handleArrow(img,'r')}/>:""}
+                {showArrow? <FaArrowRight className={'printIcon cursorPtr'} title={"next"} size={32} onClick={()=> handleArrow(img,'r')}/>:""}
 
             </span></h2>
         <div style={{

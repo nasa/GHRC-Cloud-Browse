@@ -9,6 +9,7 @@ import store from './app/store'
 import { Footer } from './components/universal/Footer';
 import PageNotFound from './pages/PageNotFound';
 import { Helmet } from 'react-helmet';
+import config from './config'
 
 const baseUrl = process.env.REACT_APP_BASE_URL || '/';
 
@@ -34,6 +35,7 @@ root.render(
                         </Routes>
                     </BrowserRouter>
                 </main>
+                <span style={{'text-align': 'right', 'margin-right':'30px'}}> {config.version}</span>
                 <footer>
                     <Footer />
                 </footer>

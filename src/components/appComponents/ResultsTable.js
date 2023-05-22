@@ -1,5 +1,5 @@
 import { DataGrid, gridClasses } from '@mui/x-data-grid'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState , useRef} from 'react'
 import { useGetGranSearchQuery } from '../../feature/api/apiSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { XMLParser } from 'fast-xml-parser'
@@ -11,13 +11,14 @@ import { isImage } from '../../lib/isImage'
 import { alpha, Backdrop } from '@mui/material'
 import config from '../../config'
 import { useHref } from 'react-router-dom'
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
 import '../../App.css'
-import FileViewer from 'react-file-viewer';
 import TextFileViewer from "./TextFileViewer";
 import printJS from 'print-js';
 import {FaDownload, FaPrint, FaArrowLeft, FaArrowRight, FaTimes} from "react-icons/fa";
-
+import {BiZoomIn, BiZoomOut} from "react-icons/bi"
+import {TbZoomReset} from "react-icons/tb"
 import { Viewer, Worker } from "@react-pdf-viewer/core";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import * as pdfjs from "pdfjs-dist";
@@ -48,6 +49,9 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     const [sortedData, setSortedData] = useState([]);
     const [showArrow, setShowArrow] = useState(true);
     const [sortOrder, setSortOrder] = useState('asc')
+    const transformComponentRef = useRef(null);
+    const [scale, setScale] = useState(1);
+
     //*********************table Layout **************** */
     const granColumns = [
         //columbs layout for when granules are returned
@@ -200,6 +204,8 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
 
 
     const handleCellDoubleClick  = (id) => {
+        //To set the next image to original size
+        setScale(1);
         // File preview
         setFilePath(`${config.cloudWatchUrlBase}${id}`, ()=>{
             setImg(id)
@@ -225,6 +231,8 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     }
 
     const handleNavigationClick = (img, direction) => {
+        //To set the next image to original size
+        setScale(1);
         const currentImageIndex = response.findIndex((row2) => row2.Key === img);
         if(direction === 'left'){
             if(currentImageIndex > 0){
@@ -327,7 +335,33 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         }
     };
 
+    const handleZoomIn = () => {
+        const { current: transformComponent } = transformComponentRef;
+        if (transformComponent) {
+            const { zoomIn, zoomReset } = transformComponent;
+            // zoomIn();
+            setScale((prevScale) => prevScale + 0.1);
+        }
+    };
 
+    const handleZoomOut = () => {
+        const { current: transformComponent } = transformComponentRef;
+        if (transformComponent) {
+            const { zoomOut } = transformComponent;
+            // zoomOut();
+            setScale((prevScale) => prevScale / 1.1);
+        }
+    };
+
+    const handleZoomReset = () => {
+        const { current: transformComponent } = transformComponentRef;
+        if (transformComponent) {
+            const { resetTransform } = transformComponent;
+            resetTransform();
+            setScale(1);
+        }
+        //setScale(1);
+    };
     //**********jsx html**********
   return (
     <div style={{height:  `${divHeight}px`, width: '90%'}}>
@@ -376,40 +410,10 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
             open={open}
         >
-            {checkFormat?
-                <div style={{ height: "100%", width: "100%", "textAlign":"center" }}>
+            {checkFormat &&(
+              <div style={{ height: "100%", width: "100%", "text-align":"center" }}>
                     <span /*style={{ float: 'right' }}*/ className={'topRight'}>
-                        {showArrow? <FaArrowLeft className={'cursorPtr'} title={"prev"} size={32} onClick={()=> handleNavigationClick(img, 'left')}/>:""}
-                            <span className={'printIcon'}>
-                                <button className={'downPrint'} onClick={() =>   printJS({printable: `${config.cloudWatchUrlBase}${img}`, type: isImage(img) !== 'pdf' ? 'image':'pdf'})}><FaPrint className="fa-download-print" size={32} title="Print" /></button>
-                            </span>
-                            <span className={'printIcon'}>
-                                <button className={'downPrint'} onClick={() => downloadFile(`${config.cloudWatchUrlBase}${img}`)}><FaDownload className="fa-download-print" size={32} title="Download" /></button>
-                            </span>
-                            <FaTimes onClick={handleClose} title={'Close'} className={'printIcon downPrint'} size={36}/>
-                        {showArrow? <FaArrowRight className={'printIcon cursorPtr'} title={"next"} size={32} onClick={()=> handleNavigationClick(img, 'right')}/>:""}
-                        </span>
-                    <h2 className="file-name"> {`${config.cloudWatchUrlBase}${img}`.split('/').pop()}
-
-                    </h2>
-                    <span>
-                    <FileViewer
-                        key={filePath}
-                        fileType={isImage(img)}
-                        filePath={filePath}
-                        zoom = {150}
-                        errorComponent={() => <div>Sorry, we could not load the document.</div>}
-                    />
-
-                    </span></div>:""
-            }
-            {
-                !checkFormat && checkPdf ? <div style={{ "textAlign":"center" }}>
-                    <span className={'topCenter'}><h2 className="file-name"> {`${config.cloudWatchUrlBase}${img}`.split('/').pop()}
-
-                    </h2></span>
-                    <span /*style={{ float: 'right' }}*/ className={'topRight'}>
-                        {showArrow? <FaArrowLeft className={'cursorPtr'} title={"prev"} size={32} onClick={()=> handleNavigationClick(img, 'left')}/>:""}
+                        {showArrow? <FaArrowLeft className={'cursorPtr'} title={"prev"} size={32} onClick={(e)=> handleNavigationClick(img, 'left')}/>:""}
                         <span className={'printIcon'}>
                                 <button className={'downPrint'} onClick={() =>   printJS({printable: `${config.cloudWatchUrlBase}${img}`, type: isImage(img) !== 'pdf' ? 'image':'pdf'})}><FaPrint className="fa-download-print" size={32} title="Print" /></button>
                             </span>
@@ -417,118 +421,156 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                                 <button className={'downPrint'} onClick={() => downloadFile(`${config.cloudWatchUrlBase}${img}`)}><FaDownload className="fa-download-print" size={32} title="Download" /></button>
                             </span>
                             <FaTimes onClick={handleClose} title={'Close'} className={'printIcon downPrint'} size={36}/>
-                        {showArrow? <FaArrowRight className={'printIcon cursorPtr'} title={"next"} size={32} onClick={()=> handleNavigationClick(img, 'right')}/>:""}
+                        {showArrow? <FaArrowRight className={'printIcon cursorPtr'} title={"next"} size={32} onClick={(e)=> handleNavigationClick(img, 'right')}/>:""}
                         </span>
-                     </div>:""
+                  <h2 className="file-name"> {`${config.cloudWatchUrlBase}${img}`.split('/').pop()}
+
+                  </h2>
+
+                    <div className="image-zoom">
+                        <div className="image-container">
+                            <TransformWrapper key={filePath} ref={transformComponentRef} options={{ limitToBounds: false , wheel: false, pinch: false }}>
+                                <TransformComponent>
+                                    <img key={filePath} src={filePath} alt="Zoomable Image" style={{ transform: `scale(${scale})` }} />
+                                </TransformComponent>
+                            </TransformWrapper>
+                        </div>
+                        <div className={'container'}>
+                            <div className="zoom-buttons">
+                                <button className={'cursorPtr img-zoom-in-out'} onClick={handleZoomIn}><BiZoomIn size={40} /></button>
+                                <button className={'cursorPtr img-zoom-in-out'} onClick={handleZoomOut}><BiZoomOut size={40} /></button>
+                                <button className={'cursorPtr img-zoom-in-out'} onClick={handleZoomReset}><TbZoomReset size={40} /></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>)
             }
             {
-                !checkFormat && checkPdf ? <Worker workerUrl={workerSrc}> <div
-                    className="rpv-core__viewer"
+              !checkFormat && checkPdf && (<div style={{ "text-align":"center" }}>
+                    <span className={'topCenter'}><h2 className="file-name"> {`${config.cloudWatchUrlBase}${img}`.split('/').pop()}
+
+                    </h2></span>
+                  <span /*style={{ float: 'right' }}*/ className={'topRight'}>
+                        {showArrow? <FaArrowLeft className={'cursorPtr'} title={"prev"} size={32} onClick={(e)=> handleNavigationClick(img, 'left')}/>:""}
+                      <span className={'printIcon'}>
+                                <button className={'downPrint'} onClick={() =>   printJS({printable: `${config.cloudWatchUrlBase}${img}`, type: isImage(img) !== 'pdf' ? 'image':'pdf'})}><FaPrint className="fa-download-print" size={32} title="Print" /></button>
+                            </span>
+                            <span className={'printIcon'}>
+                                <button className={'downPrint'} onClick={() => downloadFile(`${config.cloudWatchUrlBase}${img}`)}><FaDownload className="fa-download-print" size={32} title="Download" /></button>
+                            </span>
+                            <FaTimes onClick={handleClose} title={'Close'} className={'printIcon downPrint'} size={36}/>
+                      {showArrow? <FaArrowRight className={'printIcon cursorPtr'} title={"next"} size={32} onClick={(e)=> handleNavigationClick(img, 'right')}/>:""}
+                        </span>
+              </div>)
+            }
+            {
+              !checkFormat && checkPdf && (<Worker workerUrl={workerSrc}> <div
+                className="rpv-core__viewer"
+                style={{
+                    border: '1px solid rgba(0, 0, 0, 0.3)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: '80%',
+                    width: '70%'
+                }}
+              >
+                  <div
                     style={{
-                        border: '1px solid rgba(0, 0, 0, 0.3)',
+                        alignItems: 'center',
+                        backgroundColor: '#eeeeee',
+                        borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
                         display: 'flex',
-                        flexDirection: 'column',
-                        height: '80%',
-                        width: '70%'
+                        padding: '4px',
                     }}
-                >
-                    <div
-                        style={{
-                            alignItems: 'center',
-                            backgroundColor: '#eeeeee',
-                            borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
-                            display: 'flex',
-                            padding: '4px',
-                        }}
-                    >
-                        <Toolbar>
-                            {(props) => {
-                                const {
-                                    CurrentPageInput,
-                                    EnterFullScreen,
-                                    GoToNextPage,
-                                    GoToPreviousPage,
-                                    NumberOfPages,
-                                    ShowSearchPopover,
-                                    Zoom,
-                                    ZoomIn,
-                                    ZoomOut,
-                                } = props;
-                                return (
-                                    <>
+                  >
+                      <Toolbar>
+                          {(props) => {
+                              const {
+                                  CurrentPageInput,
+                                  EnterFullScreen,
+                                  GoToNextPage,
+                                  GoToPreviousPage,
+                                  NumberOfPages,
+                                  ShowSearchPopover,
+                                  Zoom,
+                                  ZoomIn,
+                                  ZoomOut,
+                              } = props;
+                              return (
+                                <>
 
-                                        <div style={{ padding: '0px 2px' }}>
-                                            <ShowSearchPopover />
-                                        </div>
-                                        <div style={{ padding: '0px 2px', marginLeft: 'auto' }}>
-                                            <EnterFullScreen />
-                                        </div>
-                                        <div style={{ padding: '0px 2px' }}>
-                                            <ZoomOut />
-                                        </div>
+                                    <div style={{ padding: '0px 2px' }}>
+                                        <ShowSearchPopover />
+                                    </div>
+                                    <div style={{ padding: '0px 2px', marginLeft: 'auto' }}>
+                                        <EnterFullScreen />
+                                    </div>
+                                    <div style={{ padding: '0px 2px' }}>
+                                        <ZoomOut />
+                                    </div>
 
-                                        <div style={{ padding: '0px 2px' }}>
-                                            <Zoom />
-                                        </div>
-                                        <div style={{ padding: '0px 2px' }}>
-                                            <ZoomIn />
-                                        </div>
-                                        <div style={{ padding: '0px 2px', marginLeft: 'auto' }}>
-                                            <GoToPreviousPage />
-                                        </div>
-                                        <div style={{ padding: '0px 2px', width: '4rem' }}>
-                                            <CurrentPageInput />
-                                        </div>
-                                        <div style={{ padding: '0px 2px', color: 'black' }}>
-                                            / <NumberOfPages />
-                                        </div>
-                                        <div style={{ padding: '0px 2px' }}>
-                                            <GoToNextPage />
-                                        </div>
+                                    <div style={{ padding: '0px 2px' }}>
+                                        <Zoom />
+                                    </div>
+                                    <div style={{ padding: '0px 2px' }}>
+                                        <ZoomIn />
+                                    </div>
+                                    <div style={{ padding: '0px 2px', marginLeft: 'auto' }}>
+                                        <GoToPreviousPage />
+                                    </div>
+                                    <div style={{ padding: '0px 2px', width: '4rem' }}>
+                                        <CurrentPageInput />
+                                    </div>
+                                    <div style={{ padding: '0px 2px', color: 'black' }}>
+                                        / <NumberOfPages />
+                                    </div>
+                                    <div style={{ padding: '0px 2px' }}>
+                                        <GoToNextPage />
+                                    </div>
 
-                                    </>
-                                );
-                            }}
-                        </Toolbar>
-                    </div>
-                    <div
-                        style={{
-                            flex: 1,
-                            overflow: 'hidden',
-                        }}
-                    >
-                        <Viewer
-                            fileUrl={`${config.cloudWatchUrlBase}${img}`}
-                            plugins={[toolbarPluginInstance]}
-                            defaultScale={1.25}
-                        />
-                    </div>
-                </div></Worker>
-                    :""
+                                </>
+                              );
+                          }}
+                      </Toolbar>
+                  </div>
+                  <div
+                    style={{
+                        flex: 1,
+                        overflow: 'hidden',
+                    }}
+                  >
+                      <Viewer
+                        fileUrl={`${config.cloudWatchUrlBase}${img}`}
+                        plugins={[toolbarPluginInstance]}
+                        defaultScale={1.25}
+                      />
+                  </div>
+              </div></Worker>)
+
             }
             {
-                !checkFormat && isImage(img) === 'text'? <TextFileViewer fileUrl={`${config.cloudWatchUrlBase}${img}`} setOpen={setOpen} setImg={setImg} img={img} response={response} setFilePath={setFilePath} showArrow={showArrow}/>:''
+              !checkFormat && isImage(img) === 'text' && (<TextFileViewer fileUrl={`${config.cloudWatchUrlBase}${img}`} setOpen={setOpen} setImg={setImg} img={img} response={response} setFilePath={setFilePath} showArrow={showArrow}/>)
             }
             {
-                !checkFormat && !checkPdf && isImage(img) !== 'text'?
-                    <div style={{ "textAlign":"center" , top: "50%", left: "50%"}}>
-                        <h2 className="file-name"> {`${config.cloudWatchUrlBase}${img}`.split('/').pop()}
-                            <span /*style={{ float: 'right' }}*/>
+              !checkFormat && !checkPdf && isImage(img) !== 'text' && (
+                <div style={{ "text-align":"center" , top: "50%", left: "50%"}}>
+                    <h2 className="file-name"> {`${config.cloudWatchUrlBase}${img}`.split('/').pop()}
+                        <span /*style={{ float: 'right' }}*/>
                                 <span className={'printIcon'}>
                                    {isImage(img)? <button className={'downPrint'} onClick={() => downloadFile(`${config.cloudWatchUrlBase}${img}`)}><FaDownload className="fa-download-print" size={40} title="Download" /></button>:"Folder"}
                                 </span>
                             </span>
 
-                        </h2>
-                        <span /*style={{ float: 'right' }}*/ className={'topRight'}>
-                        {showArrow?<FaArrowLeft className={'printIcon cursorPtr'} title={"prev"} size={32} onClick={()=> handleNavigationClick(img, 'left')}/>:""}
+                    </h2>
+                    <span /*style={{ float: 'right' }}*/ className={'topRight'}>
+                        {showArrow?<FaArrowLeft className={'printIcon cursorPtr'} title={"prev"} size={32} onClick={(e)=> handleNavigationClick(img, 'left')}/>:""}
                         <FaTimes onClick={handleClose} title={'Close'} className={'printIcon downPrint'} size={36}/>
-                            {showArrow?<FaArrowRight className={'printIcon cursorPtr'} title={"next"} size={32} onClick={()=> handleNavigationClick(img, 'right')}/>:""}
+                        {showArrow?<FaArrowRight className={'printIcon cursorPtr'} title={"next"} size={32} onClick={(e)=> handleNavigationClick(img, 'right')}/>:""}
                         </span>
-                        </div>:""
+                </div>)
             }
         </Backdrop>
-</div>
+    </div>
   )
 }
 

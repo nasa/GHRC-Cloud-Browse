@@ -30,7 +30,7 @@
     border-width: 0;
 }
 
-.downPrint:hover{
+.downPrint:hover, .img-zoom-in-out:hover{
     background-color: black;
     border-radius: 10px; /* change the value to adjust the rounding */
     cursor: pointer;
@@ -126,4 +126,28 @@ main {
     margin: 10px;
     cursor: pointer;
     color: inherit;
+}
+
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.img-zoom-in-out {
+    background-color: unset;
+    border-width: 0;
+    color: white;
+}
+.zoom-buttons {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 25px;
+    background-color: rgb(13 12 12 / 38%)
+}
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

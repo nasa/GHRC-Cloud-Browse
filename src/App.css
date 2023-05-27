@@ -35,10 +35,41 @@
     border-radius: 10px; /* change the value to adjust the rounding */
     cursor: pointer;
     opacity: 0.6;
+    transform: scale(1.25);
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
 }
+
 .fa-download-print {
     color: white;
 }
+
+
+.downPrint:active, .img-zoom-in-out:active {
+    background-color: black;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}
+
+.leftRightArrow{
+    background-color: unset;
+    border-width: 0;
+}
+
+.leftRightArrow:hover{
+    background-color: black;
+    color: white;
+    border-radius: 15px; /* change the value to adjust the rounding */
+    cursor: pointer;
+    opacity: 0.6;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+}
+
+.leftRightArrow:active {
+    background-color: black;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}
+
 .backButton{
     font-size: 15px;
     padding: 5px 10px;
@@ -150,4 +181,17 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.checked {
+    color: #68e116;
+}
+
+.unchecked{
+    color: white;
+}
+
+.disabled-icon {
+    pointer-events: none;
+    opacity: 0.5;
 }

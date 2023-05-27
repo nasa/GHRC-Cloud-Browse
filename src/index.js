@@ -35,7 +35,7 @@ root.render(
                         </Routes>
                     </BrowserRouter>
                 </main>
-                <span style={{'text-align': 'right', 'margin-right':'30px'}}> {config.version}</span>
+                <span style={{'textAlign': 'right', 'marginRight':'30px'}}> {config.version}</span>
                 <footer>
                     <Footer />
                 </footer>

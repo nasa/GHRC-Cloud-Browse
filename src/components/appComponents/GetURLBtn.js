@@ -79,12 +79,8 @@ const GetURLBtn = () => {
             listOfLinks.current[i] = {
               url: urlPlain +'#'+ path['Key'],
               source: sourceIMGUrl + path['Key']
-
           }
-
-
         })
-        console.log(listOfLinks)
     }
 
 

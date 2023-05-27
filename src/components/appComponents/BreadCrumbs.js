@@ -32,9 +32,7 @@ const BreadCrumbs = ({ setSkipFalse }) => {
     }
 
     const handleCrumbClick = (crmb) =>{
-        console.log('crmb',crmb)
         var displayString = crmb['path']
-        console.log(displayString)
         setSkipFalse()
         dispatch(setDelim('/'))
         dispatch(setSearch(crmb['path']))
@@ -45,7 +43,6 @@ const BreadCrumbs = ({ setSkipFalse }) => {
 
 
     const handleRootClick = () =>{
-        console.log('Execute')
         setSkipFalse()
         dispatch(setDelim('/'))
         dispatch(setSearch('pub/'))

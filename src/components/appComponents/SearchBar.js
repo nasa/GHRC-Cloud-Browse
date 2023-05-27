@@ -28,11 +28,6 @@ const SearchBar = ({ setSkipFalse }) => {
             //handles search from base of file structure
             dispatch(setDelim(''))
         }
-        console.log('here')
-        console.log('local'+ localSearch)
-        console.log('crum' +crumb)
-        console.log('delim ' + delim)
-        console.log(`${crumb}${localSearch}`)
         dispatch(setSearch(`${crumb}${localSearch}`))
     }
 
@@ -49,11 +44,11 @@ const SearchBar = ({ setSkipFalse }) => {
                 onKeyDown={event => event.key === 'Enter' ? handleSubmit(): ''}
                 sx={{
                     width: '40%',
-                    
+
                         ['& fieldset']:{
-                            borderRadius: 3, 
+                            borderRadius: 3,
                         }
-                    
+
                 }}
             />
         </>

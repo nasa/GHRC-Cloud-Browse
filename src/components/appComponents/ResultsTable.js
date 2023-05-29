@@ -1,5 +1,5 @@
 import { DataGrid, gridClasses } from '@mui/x-data-grid'
-import React, { useEffect, useState , useRef} from 'react'
+import React, { useEffect, useState , useRef } from 'react'
 import { useGetGranSearchQuery } from '../../feature/api/apiSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { XMLParser } from 'fast-xml-parser'
@@ -12,17 +12,17 @@ import { alpha, Backdrop } from '@mui/material'
 import config from '../../config'
 import { useHref } from 'react-router-dom'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
-
+import { saveAs } from 'file-saver';
 import '../../App.css'
 import TextFileViewer from "./TextFileViewer";
 import printJS from 'print-js';
-import {FaDownload, FaPrint, FaArrowLeft, FaArrowRight, FaTimes} from "react-icons/fa";
-import {BiZoomIn, BiZoomOut} from "react-icons/bi"
-import {TbZoomReset} from "react-icons/tb"
+import { FaDownload, FaPrint, FaArrowLeft, FaArrowRight, FaTimes, FaCheckCircle } from "react-icons/fa";
+import { BiCartDownload } from 'react-icons/bi';
+import { BiZoomIn, BiZoomOut } from "react-icons/bi"
+import { TbZoomReset } from "react-icons/tb"
 import { Viewer, Worker } from "@react-pdf-viewer/core";
-import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import * as pdfjs from "pdfjs-dist";
-import { toolbarPlugin, ToolbarSlot } from '@react-pdf-viewer/toolbar';
+import { toolbarPlugin } from '@react-pdf-viewer/toolbar';
 
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
@@ -47,10 +47,15 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     const [img, setImg] = useState('')
     const [filePath, setFilePath] = useState();
     const [sortedData, setSortedData] = useState([]);
-    const [showArrow, setShowArrow] = useState(true);
+    const [showArrowLeft, setShowArrowLeft] = useState(true);
+    const [showArrowRight, setShowArrowRight] = useState(true);
     const [sortOrder, setSortOrder] = useState('asc')
     const transformComponentRef = useRef(null);
     const [scale, setScale] = useState(1);
+    const [urls, setUrls] = useState([]);
+    const [rowData, setRowData] = useState();
+    const [selectionModel, setSelectionModel] = useState([]);
+    const [divHeight, setDivHeight] = useState(window.innerHeight - 450);
 
     //*********************table Layout **************** */
     const granColumns = [
@@ -84,8 +89,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
 
         if(uri.slice(-1) === '/'){
             var index = uri.indexOf(search);
-            var result = uri.slice(0, index) + uri.slice(index + search.length);
-            return result
+            return  uri.slice(0, index) + uri.slice(index + search.length);
         }
         // console.log(uri);
         const temp = uri.split('/')
@@ -106,8 +110,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
 
         // XML parser may return a object on single occurence, this captures the edge case
         if(!Array.isArray(data)){
-           var tmpObject = [data]
-           return tmpObject
+           return [data]
         }
         return data
     }
@@ -128,9 +131,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     const processResp = (resp) =>{
         //process the response from the api call into an array of objects
         //for use in the data grid
-        const xml = resp
-        const json = parser.parse(xml)
-        console.log(json)
+        const json = parser.parse(resp)
         var responseFolder;
         var responseObject;
         var processedResp = []
@@ -203,12 +204,26 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
 
 
 
-    const handleCellDoubleClick  = (id) => {
+    const handleCellDoubleClick  = (rows) => {
+        const currentImageIndex = response.findIndex((row2) => row2.Key === rows.id);
+        setShowArrowLeft(true)
+        setShowArrowRight(true)
+        if(currentImageIndex === 0 && (response.length-1) === 0){
+            setShowArrowLeft(false)
+            setShowArrowRight(false)
+        }
+        else if(currentImageIndex === 0){
+            setShowArrowLeft(false)
+        }else if(currentImageIndex === (response.length-1)){
+            setShowArrowRight(false)
+        }
+        let id = rows['id']
         //To set the next image to original size
         setScale(1);
         // File preview
         setFilePath(`${config.cloudWatchUrlBase}${id}`, ()=>{
             setImg(id)
+            setRowData(rows.row)
             setOpen(true)
         })
 
@@ -224,34 +239,54 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
 
         } else if (isImage(id)){
             setImg(id)
+            setRowData(rows.row)
             setOpen(true)
            // handleToggle()
         }
         updateBrowserURL(id)
     }
 
-    const handleNavigationClick = (img, direction) => {
+    const handleNavigationClick = (row, direction) => {
+        let img = row.Key
         //To set the next image to original size
         setScale(1);
         const currentImageIndex = response.findIndex((row2) => row2.Key === img);
+        setShowArrowLeft(true)
+        setShowArrowRight(true)
+
+        if(currentImageIndex === 1 && direction === 'left'){
+            setShowArrowLeft(false)
+        }else if(currentImageIndex === (response.length-2) && direction === 'right'){
+            setShowArrowRight(false)
+        }
+
         if(direction === 'left'){
             if(currentImageIndex > 0){
                 const id = response[currentImageIndex-1].Key
                 setFilePath(`${config.cloudWatchUrlBase}${id}`)
+                setRowData(response[currentImageIndex-1])
                 setImg(id)
+                updateBrowserURL(id)
                 setOpen(true)
             }
         }else if(direction === 'right'){
             if(response && response.length > currentImageIndex+1){
                 const id = response[currentImageIndex+1].Key
                 setFilePath(`${config.cloudWatchUrlBase}${id}`)
+                setRowData(response[currentImageIndex+1])
                 setImg(id)
+                updateBrowserURL(id)
                 setOpen(true)
             }
         }
     }
 
-    const handleClose = () => {
+    const handleClose = (rowData) => {
+        let img = rowData.Key
+        //To set the next image to original size
+        setScale(1);
+        const desiredPath = img.substring(0, img.lastIndexOf('/') + 1);
+        updateBrowserURL(desiredPath)
         setOpen(false)
         setImg('')
     }
@@ -272,11 +307,10 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         if(isSuccess){
             processResp(resp)
         } else if(isError){
-            console.log("")
             if(error.includes('404')) {href('/404')}
         }
+        // eslint-disable-next-line
     }, [resp])
-
 
     const useMyHref = (to) => {useHref(to)}
     const href = useMyHref
@@ -310,8 +344,6 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         }
     }, [sortedData]);
 
-    const [divHeight, setDivHeight] = useState(window.innerHeight - 450);
-
     useEffect(() => {
         const handleResize = () => {
             setDivHeight(window.innerHeight - 450);
@@ -338,8 +370,6 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     const handleZoomIn = () => {
         const { current: transformComponent } = transformComponentRef;
         if (transformComponent) {
-            const { zoomIn, zoomReset } = transformComponent;
-            // zoomIn();
             setScale((prevScale) => prevScale + 0.1);
         }
     };
@@ -347,8 +377,6 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     const handleZoomOut = () => {
         const { current: transformComponent } = transformComponentRef;
         if (transformComponent) {
-            const { zoomOut } = transformComponent;
-            // zoomOut();
             setScale((prevScale) => prevScale / 1.1);
         }
     };
@@ -362,6 +390,41 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         }
         //setScale(1);
     };
+
+    const isExist = (targetItem) => {
+        if(targetItem) return urls.some((item) => item.Key === targetItem.Key && item.Size === targetItem.Size);
+    }
+
+    useEffect(() => {
+        const idArray = urls.map((row) => row.Key);
+        setSelectionModel(idArray)
+        dispatch(setSelectedList(urls))
+
+    }, [urls]);
+
+    const addFile = (row) => {
+        if(!urls.includes(row)) setUrls([...urls, row])
+        else {
+            const newArray = urls.filter(item => item !== row);
+            setUrls(newArray)
+        }
+    }
+
+    const downloader = (linkList) => {
+        linkList.forEach((link) =>{
+            if(link && link.Size){
+                fetch(`${config.cloudWatchUrlBase}${link['Key']}`)
+                    .then(res => res.blob())
+                    .then(blob => {
+                        saveAs(blob, link['Key'].split('/').pop())
+                    })
+            }
+        })
+    }
+
+    const folderUrl = img.split('/').filter(Boolean);
+    const folderName = folderUrl[folderUrl.length - 1];
+
     //**********jsx html**********
   return (
     <div style={{height:  `${divHeight}px`, width: '90%'}}>
@@ -387,19 +450,21 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             disableColumnMenu={true}
             rowsPerPageOptions={[10, 25, 50, 100]}
             checkboxSelection= {true}
+            disableSelectionOnClick
             getRowId={row => row.Key}
+            selectionModel={selectionModel}
             onSelectionModelChange={(id) => {
-
+                // eslint-disable-next-line
                 {/*handles the selction of rows*/}
                 const selectedIDs = new Set(id)
-                const selectedRowData = response.filter((row) =>
-                selectedIDs.has(row.Key))
+                const selectedRowData = response.filter((row) => selectedIDs.has(row.Key))
+                //setSelectionModel(array)
+                setUrls(selectedRowData)
                 dispatch(setSelectedList(selectedRowData))
             }}
-            onRowClick={(row) => {handleCellDoubleClick(row['id']);
+            onRowClick={(row) => {handleCellDoubleClick(row);
            }
         }
-
             // onCellClick   onCellDoubleClick  onRowClick
             getRowClassName={(params) =>
                 params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'}
@@ -411,17 +476,25 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             open={open}
         >
             {checkFormat &&(
-              <div style={{ height: "100%", width: "100%", "text-align":"center" }}>
+              <div style={{ height: "100%", width: "100%", "textAlign":"center" }}>
                     <span /*style={{ float: 'right' }}*/ className={'topRight'}>
-                        {showArrow? <FaArrowLeft className={'cursorPtr'} title={"prev"} size={32} onClick={(e)=> handleNavigationClick(img, 'left')}/>:""}
+                        <span className={!showArrowLeft? 'disabled-icon':''}> <FaArrowLeft className={'printIcon cursorPtr leftRightArrow'} title={"prev"} size={32} onClick={()=> handleNavigationClick(rowData, 'left')}/></span>
                         <span className={'printIcon'}>
                                 <button className={'downPrint'} onClick={() =>   printJS({printable: `${config.cloudWatchUrlBase}${img}`, type: isImage(img) !== 'pdf' ? 'image':'pdf'})}><FaPrint className="fa-download-print" size={32} title="Print" /></button>
                             </span>
                             <span className={'printIcon'}>
                                 <button className={'downPrint'} onClick={() => downloadFile(`${config.cloudWatchUrlBase}${img}`)}><FaDownload className="fa-download-print" size={32} title="Download" /></button>
                             </span>
-                            <FaTimes onClick={handleClose} title={'Close'} className={'printIcon downPrint'} size={36}/>
-                        {showArrow? <FaArrowRight className={'printIcon cursorPtr'} title={"next"} size={32} onClick={(e)=> handleNavigationClick(img, 'right')}/>:""}
+                            <span className={'printIcon'}>
+                                <button className={'downPrint'} onClick={() => addFile(rowData)}  ><FaCheckCircle className={`fa-download-print ${isExist(rowData) ? 'checked' : 'unchecked'}`} size={32} title="Download"/>
+                                </button>
+                            </span>
+                            <span className={'printIcon'}>
+                                <button className={'downPrint'} onClick={() => downloader(urls)}  ><BiCartDownload className="fa-download-print" size={32} title="Download All"
+                                /></button>
+                            </span>
+                            <FaTimes onClick={() => handleClose(rowData)} title={'Close'} className={'printIcon downPrint'} size={36}/>
+                         <span className={!showArrowRight? 'disabled-icon':''}><FaArrowRight className={'printIcon cursorPtr leftRightArrow'} title={"next"} size={32} onClick={()=> handleNavigationClick(rowData, 'right')}/></span>
                         </span>
                   <h2 className="file-name"> {`${config.cloudWatchUrlBase}${img}`.split('/').pop()}
 
@@ -431,7 +504,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                         <div className="image-container">
                             <TransformWrapper key={filePath} ref={transformComponentRef} options={{ limitToBounds: false , wheel: false, pinch: false }}>
                                 <TransformComponent>
-                                    <img key={filePath} src={filePath} alt="Zoomable Image" style={{ transform: `scale(${scale})` }} />
+                                    <img key={filePath} src={filePath} alt={'Zoomable Image'+ filePath}  style={{ transform: `scale(${scale})` }} />
                                 </TransformComponent>
                             </TransformWrapper>
                         </div>
@@ -446,20 +519,28 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                 </div>)
             }
             {
-              !checkFormat && checkPdf && (<div style={{ "text-align":"center" }}>
+              !checkFormat && checkPdf && (<div style={{ "textAlign":"center" }}>
                     <span className={'topCenter'}><h2 className="file-name"> {`${config.cloudWatchUrlBase}${img}`.split('/').pop()}
 
                     </h2></span>
                   <span /*style={{ float: 'right' }}*/ className={'topRight'}>
-                        {showArrow? <FaArrowLeft className={'cursorPtr'} title={"prev"} size={32} onClick={(e)=> handleNavigationClick(img, 'left')}/>:""}
+                      <span className={!showArrowLeft? 'disabled-icon':''}><FaArrowLeft className={'printIcon cursorPtr leftRightArrow'} title={"prev"} size={32} onClick={()=> handleNavigationClick(rowData, 'left')}/></span>
                       <span className={'printIcon'}>
                                 <button className={'downPrint'} onClick={() =>   printJS({printable: `${config.cloudWatchUrlBase}${img}`, type: isImage(img) !== 'pdf' ? 'image':'pdf'})}><FaPrint className="fa-download-print" size={32} title="Print" /></button>
                             </span>
                             <span className={'printIcon'}>
                                 <button className={'downPrint'} onClick={() => downloadFile(`${config.cloudWatchUrlBase}${img}`)}><FaDownload className="fa-download-print" size={32} title="Download" /></button>
                             </span>
-                            <FaTimes onClick={handleClose} title={'Close'} className={'printIcon downPrint'} size={36}/>
-                      {showArrow? <FaArrowRight className={'printIcon cursorPtr'} title={"next"} size={32} onClick={(e)=> handleNavigationClick(img, 'right')}/>:""}
+                            <span className={'printIcon'}>
+                                <button className={'downPrint'} onClick={() => addFile(rowData)}  ><FaCheckCircle className={`fa-download-print ${isExist(rowData) ? 'checked' : 'unchecked'}`} size={32} title="Download"
+                                /></button>
+                            </span>
+                            <span className={'printIcon'}>
+                                <button className={'downPrint'} onClick={() => downloader(urls)}  ><BiCartDownload className="fa-download-print" size={32} title="Download All"
+                                /></button>
+                            </span>
+                            <FaTimes onClick={() => handleClose(rowData)} title={'Close'} className={'printIcon downPrint'} size={36}/>
+                      <span className={!showArrowRight? 'disabled-icon':''}><FaArrowRight className={'printIcon cursorPtr leftRightArrow'} title={"next"} size={32} onClick={()=> handleNavigationClick(rowData, 'right')}/></span>
                         </span>
               </div>)
             }
@@ -549,25 +630,52 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
 
             }
             {
-              !checkFormat && isImage(img) === 'text' && (<TextFileViewer fileUrl={`${config.cloudWatchUrlBase}${img}`} setOpen={setOpen} setImg={setImg} img={img} response={response} setFilePath={setFilePath} showArrow={showArrow}/>)
+                !checkFormat && isImage(img) === 'text'? <TextFileViewer
+                    fileUrl={`${config.cloudWatchUrlBase}${img}`}
+                    handleClose={handleClose}
+                    downloader={downloader}
+                    urls={urls}
+                    addFile={addFile}
+                    isExist={isExist}
+                    rowData={rowData}
+                    handleNavigationClick={handleNavigationClick}
+                    updateBrowserURL={updateBrowserURL}
+                    setOpen={setOpen}
+                    setImg={setImg}
+                    img={img}
+                    response={response}
+                    setFilePath={setFilePath}
+                    showArrowRight={showArrowRight}
+                    showArrowLeft={showArrowLeft}/>:''
             }
             {
-              !checkFormat && !checkPdf && isImage(img) !== 'text' && (
-                <div style={{ "text-align":"center" , top: "50%", left: "50%"}}>
-                    <h2 className="file-name"> {`${config.cloudWatchUrlBase}${img}`.split('/').pop()}
-                        <span /*style={{ float: 'right' }}*/>
+                !checkFormat && !checkPdf && isImage(img) !== 'text'?
+                    <div style={{ "textAlign":"center" , top: "50%", left: "50%"}}>
+                        <h2 className="file-name"> {`${config.cloudWatchUrlBase}${img}`.split('/').pop()}
+                            <span /*style={{ float: 'right' }}*/>
                                 <span className={'printIcon'}>
-                                   {isImage(img)? <button className={'downPrint'} onClick={() => downloadFile(`${config.cloudWatchUrlBase}${img}`)}><FaDownload className="fa-download-print" size={40} title="Download" /></button>:"Folder"}
+                                   {isImage(img)?
+                                       <button className={'downPrint'} onClick={() => downloadFile(`${config.cloudWatchUrlBase}${img}`)}>
+                                           <FaDownload className="fa-download-print" size={40} title="Download" />
+                                       </button>: folderName? "Folder: "+folderName:""}
                                 </span>
                             </span>
 
-                    </h2>
-                    <span /*style={{ float: 'right' }}*/ className={'topRight'}>
-                        {showArrow?<FaArrowLeft className={'printIcon cursorPtr'} title={"prev"} size={32} onClick={(e)=> handleNavigationClick(img, 'left')}/>:""}
-                        <FaTimes onClick={handleClose} title={'Close'} className={'printIcon downPrint'} size={36}/>
-                        {showArrow?<FaArrowRight className={'printIcon cursorPtr'} title={"next"} size={32} onClick={(e)=> handleNavigationClick(img, 'right')}/>:""}
+                        </h2>
+                        <span /*style={{ float: 'right' }}*/ className={'topRight'}>
+                            <span className={!showArrowLeft? 'disabled-icon':''}><FaArrowLeft className={'printIcon cursorPtr leftRightArrow'} title={"prev"} size={32} onClick={()=> handleNavigationClick(rowData, 'left')}/></span>
+                            <span className={'printIcon'}>
+                                <button className={'downPrint'} onClick={() => addFile(rowData)}><FaCheckCircle className={`fa-download-print ${isExist(rowData) ? 'checked' : 'unchecked'}`} size={32} title="Download"
+                                /></button>
+                            </span>
+                             <span className={'printIcon'}>
+                                <button className={'downPrint'} onClick={() => downloader(urls)}  ><BiCartDownload className="fa-download-print" size={32} title="Download All"
+                                /></button>
+                            </span>
+                            <FaTimes onClick={() => handleClose(rowData)} title={'Close'} className={'printIcon downPrint'} size={36}/>
+                            <span className={!showArrowRight? 'disabled-icon':''}><FaArrowRight className={'printIcon cursorPtr leftRightArrow'} title={"next"} size={32} onClick={()=> handleNavigationClick(rowData, 'right')}/></span>
                         </span>
-                </div>)
+                    </div>:""
             }
         </Backdrop>
     </div>

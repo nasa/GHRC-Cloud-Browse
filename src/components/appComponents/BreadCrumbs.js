@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setDelim } from '../../feature/delimSlice'
 import { setSearch } from '../../feature/searchSlice'
 import { setCrumb } from '../../feature/crumbSlice'
-import {FaArrowLeft, FaHome} from "react-icons/fa";
+import { FaHome } from "react-icons/fa";
 //import { useLocation } from "react-router-dom";
 const BreadCrumbs = ({ setSkipFalse }) => {
     const [crumbArray, setCrumbArray] = useState([])
@@ -25,7 +25,6 @@ const BreadCrumbs = ({ setSkipFalse }) => {
     }, [crumb])
 
     const updateBrowserURL  = (id) => {
-        var currentUrl = window.location.href;
         // Modify the URL
         var newUrl =  'browseui/#' + id;
         // Change the URL without reloading the page
@@ -33,9 +32,7 @@ const BreadCrumbs = ({ setSkipFalse }) => {
     }
 
     const handleCrumbClick = (crmb) =>{
-        console.log('crmb',crmb)
         var displayString = crmb['path']
-        console.log(displayString)
         setSkipFalse()
         dispatch(setDelim('/'))
         dispatch(setSearch(crmb['path']))
@@ -46,7 +43,6 @@ const BreadCrumbs = ({ setSkipFalse }) => {
 
 
     const handleRootClick = () =>{
-        console.log('Execute')
         setSkipFalse()
         dispatch(setDelim('/'))
         dispatch(setSearch('pub/'))

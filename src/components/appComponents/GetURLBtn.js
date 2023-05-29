@@ -7,7 +7,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { saveAs } from 'file-saver';
 import config from '../../config';
 
 const GetURLBtn = () => {
@@ -21,7 +20,7 @@ const GetURLBtn = () => {
         setOpen(true);
         // setScroll(scrollType);
       };
-    
+
       const handleClose = () => {
         setOpen(false);
       };
@@ -37,17 +36,17 @@ const GetURLBtn = () => {
       };
 
       const handleCopy = () => {
-        
+
         var tmp = listOfLinks.current.map(itm => itm.source).toString().split(",").join("\n")
         navigator.clipboard.writeText(tmp)
       };
 
       const handleDashboardCopy = () => {
-        
+
         var tmp = listOfLinks.current.map(itm => itm.url).toString().split(",").join("\n")
         navigator.clipboard.writeText(tmp)
       };
-    
+
       const descriptionElementRef = React.useRef(null);
       React.useEffect(() => {
         if (open) {
@@ -64,7 +63,7 @@ const GetURLBtn = () => {
         handleClickOpen()
     }
 
-  
+
     const downloader = (linkList) => {
         var sourceIMGUrl = config.sourceIMGUrl;
         var url = window.location.href;
@@ -73,19 +72,15 @@ const GetURLBtn = () => {
         if(urlPlain.endsWith("/")) {
           urlPlain = urlPlain.slice(0,-1)
         }
-        
+
         listOfLinks.current = [];
-       
+
         linkList.forEach((path, i) =>{
             listOfLinks.current[i] = {
               url: urlPlain +'#'+ path['Key'],
               source: sourceIMGUrl + path['Key']
-          
           }
-            
-            
         })
-        console.log(listOfLinks)
     }
 
 
@@ -115,27 +110,24 @@ const GetURLBtn = () => {
             ref={descriptionElementRef}
             tabIndex={-1}
           >
-            
+
         {
-          listOfLinks.current.map((itm, index) => 
-            <div> <a href ={itm.source} target="_blank">{itm.source}</a>
+          listOfLinks.current.map((itm) =>
+            <div> <a href ={itm.source}  rel="noopener noreferrer" target="_blank">{itm.source}</a>
             &nbsp;&nbsp;&nbsp;
-            <a href ={itm.url} target="_blank">[Dashboard]</a>
-            
+            <a href ={itm.url}  rel="noopener noreferrer" target="_blank">[Dashboard]</a>
             </div>
-           
             )
-          
         }
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-        
+
         <Button onClick={handleDashboardCopy}>Copy Dashboard URL to Clipboard</Button>
         <Button onClick={handleCopy}>Copy to Clipboard</Button>
         <Button onClick={handleDownload}>Download as a file</Button>
           <Button onClick={handleClose}>Close</Button>
-          
+
         </DialogActions>
       </Dialog>
 

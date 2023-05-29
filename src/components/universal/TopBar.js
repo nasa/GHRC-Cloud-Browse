@@ -7,11 +7,11 @@ const TopBar = () => {
     <AppBar position="relative"sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, bgcolor: '#2276AC' }}>
         <Toolbar>
             <Box
-            sx={{width: 85}}
-            component='img' 
+            sx={{width: 70}}
+            component='img'
             src='/browseui/assets/ghrc_logo.png'/>
             <Typography variant="h5" noWrap component="div" sx={{ml: 2}}>
-                Browse UI
+               Cloud Browse
             </Typography>
         </Toolbar>
     </AppBar>

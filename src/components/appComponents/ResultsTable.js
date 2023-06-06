@@ -12,7 +12,6 @@ import { alpha, Backdrop } from '@mui/material'
 import config from '../../config'
 import { useHref } from 'react-router-dom'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
-import { saveAs } from 'file-saver';
 import '../../App.css'
 import TextFileViewer from "./TextFileViewer";
 import printJS from 'print-js';
@@ -23,6 +22,7 @@ import { TbZoomReset } from "react-icons/tb"
 import { Viewer, Worker } from "@react-pdf-viewer/core";
 import * as pdfjs from "pdfjs-dist";
 import { toolbarPlugin } from '@react-pdf-viewer/toolbar';
+import FileDownloader,{ downloadFile } from "../universal/FileDownloader";
 
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
@@ -315,24 +315,9 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     const useMyHref = (to) => {useHref(to)}
     const href = useMyHref
 
-
     //**********data table styling
     const ODD_OPACITY = 0.2
 
-   //Download file after viewing
-    const downloadFile = (fileUrl) => {
-        fetch(fileUrl)
-            .then(response => response.blob())
-            .then(blob => {
-                const url = window.URL.createObjectURL(new Blob([blob]));
-                const link = document.createElement('a');
-                link.href = url;
-                link.setAttribute('download', fileUrl.split('/').pop());
-                document.body.appendChild(link);
-                link.click();
-                link.parentNode.removeChild(link);
-            });
-    };
 
     const checkFormat = isImage(img) === 'jpeg' || isImage(img) === 'png' || isImage(img) === 'gif';
     const checkPdf = isImage(img) === 'pdf'
@@ -410,18 +395,6 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
         }
     }
 
-    const downloader = (linkList) => {
-        linkList.forEach((link) =>{
-            if(link && link.Size){
-                fetch(`${config.cloudWatchUrlBase}${link['Key']}`)
-                    .then(res => res.blob())
-                    .then(blob => {
-                        saveAs(blob, link['Key'].split('/').pop())
-                    })
-            }
-        })
-    }
-
     const folderUrl = img.split('/').filter(Boolean);
     const folderName = folderUrl[folderUrl.length - 1];
 
@@ -490,7 +463,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                                 </button>
                             </span>
                             <span className={'printIcon'}>
-                                <button className={'downPrint'} onClick={() => downloader(urls)}  ><BiCartDownload className="fa-download-print" size={32} title="Download All"
+                                <button className={'downPrint'} onClick={() => FileDownloader(urls, false)}  ><BiCartDownload className="fa-download-print" size={32} title="Download All"
                                 /></button>
                             </span>
                             <FaTimes onClick={() => handleClose(rowData)} title={'Close'} className={'printIcon downPrint'} size={36}/>
@@ -536,7 +509,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                                 /></button>
                             </span>
                             <span className={'printIcon'}>
-                                <button className={'downPrint'} onClick={() => downloader(urls)}  ><BiCartDownload className="fa-download-print" size={32} title="Download All"
+                                <button className={'downPrint'} onClick={() => FileDownloader(urls, false)}  ><BiCartDownload className="fa-download-print" size={32} title="Download All"
                                 /></button>
                             </span>
                             <FaTimes onClick={() => handleClose(rowData)} title={'Close'} className={'printIcon downPrint'} size={36}/>
@@ -633,7 +606,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                 !checkFormat && isImage(img) === 'text'? <TextFileViewer
                     fileUrl={`${config.cloudWatchUrlBase}${img}`}
                     handleClose={handleClose}
-                    downloader={downloader}
+                    downloader={FileDownloader(urls, false)}
                     urls={urls}
                     addFile={addFile}
                     isExist={isExist}
@@ -669,7 +642,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
                                 /></button>
                             </span>
                              <span className={'printIcon'}>
-                                <button className={'downPrint'} onClick={() => downloader(urls)}  ><BiCartDownload className="fa-download-print" size={32} title="Download All"
+                                <button className={'downPrint'} onClick={() => FileDownloader(urls, false)}  ><BiCartDownload className="fa-download-print" size={32} title="Download All"
                                 /></button>
                             </span>
                             <FaTimes onClick={() => handleClose(rowData)} title={'Close'} className={'printIcon downPrint'} size={36}/>

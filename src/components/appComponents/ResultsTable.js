@@ -12,7 +12,6 @@ import { alpha, Backdrop } from '@mui/material'
 import config from '../../config'
 import { useHref } from 'react-router-dom'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
-import { saveAs } from 'file-saver';
 import '../../App.css'
 import TextFileViewer from "./TextFileViewer";
 import printJS from 'print-js';
@@ -23,7 +22,7 @@ import { TbZoomReset } from "react-icons/tb"
 import { Viewer, Worker } from "@react-pdf-viewer/core";
 import * as pdfjs from "pdfjs-dist";
 import { toolbarPlugin } from '@react-pdf-viewer/toolbar';
-import FileDownloader,{ downloadFile} from "../universal/FileDownloader";
+import FileDownloader,{ downloadFile } from "../universal/FileDownloader";
 
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";

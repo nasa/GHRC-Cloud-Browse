@@ -1,44 +1,38 @@
 import config from "../../config";
 import { saveAs } from 'file-saver';
 
-
-const downloader = (linkList, setShow) => {
+const downloader = async (linkList, setShow) => {
     console.log('list', linkList);
 
-    // Function to download a single link
-    const downloadLink = (link) => {
-        if (link && link.Size) {
-            const cacheBuster = new Date().getTime() + Math.random(); // Generate cache-busting timestamp
-            const url = `${config.cloudWatchUrlBase}${link['Key']}?cache=${cacheBuster}`;
-            return fetch(url)
-                .then((res) => res.blob())
-                .then((blob) => {
-                    const fileName = link['Key'].split('/').pop();
-                    saveAs(blob, fileName);
-                    //console.log(`Downloaded file: ${fileName}`);
-                });
-        }else{
-            setShow(true)
-        }
-    };
-
-    // Download all links in the linkList
-    const downloadAllLinks = async () => {
+    try {
         for (const link of linkList) {
-            await downloadLink(link);
+            if (link && link.Size) {
+                const cacheBuster = new Date().getTime() + Math.random(); // Generate cache-busting timestamp
+                const url = `${config.cloudWatchUrlBase}${link['Key']}?cache=${cacheBuster}`;
+                const res = await fetch(url);
+                const blob = await res.blob();
+                const fileName = link['Key'].split('/').pop();
+                saveAs(blob, fileName);
+            } else {
+                if (typeof setShow === 'function') setShow(true);
+            }
         }
-    };
-    // Call the function to start downloading
-    downloadAllLinks().then(r => console.log('download completed'));
+    } catch (error) {
+        console.error('Error during download:', error);
+    }
 };
 
-export const downloadFile = (fileUrl) => {
-    fetch(fileUrl)
-        .then(response => response.blob())
-        .then(blob => {
-            const fileName = fileUrl.split('/').pop()
-            saveAs(blob, fileName);
-        });
+
+export const downloadFile = async (fileUrl) => {
+    try {
+        const response = await fetch(fileUrl);
+        const blob = await response.blob();
+        const fileName = fileUrl.split('/').pop();
+        saveAs(blob, fileName);
+    } catch (error) {
+        console.error('Error downloading file:', error);
+    }
 };
+
 
 export default downloader

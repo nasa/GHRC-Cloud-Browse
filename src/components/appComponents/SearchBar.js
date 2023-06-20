@@ -22,13 +22,16 @@ const SearchBar = ({ setSkipFalse }) => {
             //condition to reset to top of file structure
             dispatch(setDelim('/'))
             dispatch(setCrumb(''))
-            dispatch(setSearch(''))
+            dispatch(setSearch('pub/'))
             return
         } else if(delim === '/'){
             //handles search from base of file structure
             dispatch(setDelim(''))
+            dispatch(setSearch('pub/'))
         }
-        dispatch(setSearch(`${crumb}${localSearch}`))
+        dispatch(setDelim('/'))
+        dispatch(setSearch(`pub/${crumb}${localSearch}`))
+        dispatch(setCrumb(`${crumb}${localSearch}`))
     }
 
 

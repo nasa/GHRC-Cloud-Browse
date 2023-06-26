@@ -9,7 +9,7 @@ export const Footer = () => {
         <Grid container spacing={2} width='50%' sx={{borderBottom: 1, mb:1}}>
           <Grid item xs={6}>
             <Box
-              sx={{width: 85, height: 55}}
+              sx={{width: 70, height: 55}}
               component='img'
               src='/browseui/assets/ghrc_logo.png'/>
             <Box

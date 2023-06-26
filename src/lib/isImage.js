@@ -25,6 +25,8 @@ export const isImage = (gran) =>{
             return 'tar'
         case 'gz':
             return 'gz'
+        case 'ps':
+            return 'ps'
         default:
             return false
     }

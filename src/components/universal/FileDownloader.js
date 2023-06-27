@@ -48,13 +48,11 @@ export const useProgress = () => {
 };
 
 const downloader = async (linkList, setShow, setProgress) => {
-  console.log("list", linkList);
 
   try {
     const zip = new JSZip();
     const maxFileSizeToZip = 2
     const filesGreaterThanX_MB = linkList.filter((file) => file.Size > (maxFileSizeToZip * 1024 * 1024));
-    console.log("filesGreaterThanX_MB", linkList);
     let counter = 1;
 
     for (const link of linkList) {

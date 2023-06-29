@@ -51,13 +51,13 @@ const downloader = async (linkList, setShow, setProgress) => {
 
   try {
     const zip = new JSZip();
-    const maxFileSizeToZip = 2
+    const maxFileSizeToZip = 200
     const filesGreaterThanX_MB = linkList.filter((file) => file.Size > (maxFileSizeToZip * 1024 * 1024));
+    const folderCountSearch = linkList.filter((file) => !file.Size);
     let counter = 1;
 
     for (const link of linkList) {
       if (cancelFlag) {
-        console.log("Download cancelled.");
         updateProgress(100);
         break;
       }
@@ -71,20 +71,17 @@ const downloader = async (linkList, setShow, setProgress) => {
         const fileName = link["Key"].split("/").pop();
 
         if (fileSizeMB <= (maxFileSizeToZip/1024 * 1024)) {
+          const counterValue = (counter / (linkList.length - filesGreaterThanX_MB.length - folderCountSearch.length)) * 100
           if (typeof setProgress === "function") {
-            updateProgress(
-                (counter / (linkList.length - filesGreaterThanX_MB.length)) * 100
-            );
-            setProgress(
-                (counter / (linkList.length - filesGreaterThanX_MB.length)) * 100
-            );
+            updateProgress(counterValue);
+            setProgress(counterValue);
           }
-          console.log(
+          /*console.log(
               "zipping",
               counter,
               "of",
-              linkList.length - filesGreaterThanX_MB.length
-          );
+              linkList.length - filesGreaterThanX_MB.length - folderCountSearch.length
+          );*/
           counter += 1;
           zip.file(fileName, blob);
         } else {
@@ -96,10 +93,6 @@ const downloader = async (linkList, setShow, setProgress) => {
     }
 
     if (Object.keys(zip.files).length > 0) {
-      console.log(
-          "Object.keys(zip.files).length",
-          Object.keys(zip.files).length
-      );
       const zipBlob = await zip.generateAsync({ type: "blob" });
       const zipFileName = linkList[0] && linkList[0].Key? (linkList[0].Key.split('/')[1])+'.zip':'download.zip';
       saveAs(zipBlob, zipFileName);

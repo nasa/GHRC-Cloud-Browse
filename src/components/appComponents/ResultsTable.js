@@ -25,8 +25,6 @@ import {
   unsubscribeProgress,
   cancelDownload,
 } from "../universal/FileDownloader";
-import { FcCancel } from "react-icons/fc";
-import { BiCartDownload } from "react-icons/bi";
 import { Line } from "rc-progress";
 import {FaTimes} from "react-icons/fa";
 
@@ -364,7 +362,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             </div>
           </div>
           <div className="progress-text">
-            Zip Progress: {progress.toPrecision(2)}%
+            Zip Progress: {progress.toFixed(2)}%
           </div>
         </div>
       )}

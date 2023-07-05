@@ -48,7 +48,6 @@ export const useProgress = () => {
 };
 
 const downloader = async (linkList, setShow, setProgress) => {
-
   try {
     const zip = new JSZip();
     const maxFileSizeToZip = 200
@@ -59,6 +58,7 @@ const downloader = async (linkList, setShow, setProgress) => {
     for (const link of linkList) {
       if (cancelFlag) {
         updateProgress(100);
+        setProgress(100);
         break;
       }
 

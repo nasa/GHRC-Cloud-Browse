@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import React, { useState, useEffect } from 'react'
+import React, {useState, useEffect } from 'react'
 import BreadCrumbs from './components/appComponents/BreadCrumbs'
 import DownloadBtn from './components/appComponents/DownloadBtn'
 import GetURLBtn from './components/appComponents/GetURLBtn'
@@ -67,20 +67,20 @@ const handleToggle = () => {setOpen(!open);}
 
   return (
     <>
-        {show && (
-            <div className={`alert alert-danger alert-dismissible fade show`} role="alert">
-                <strong>NOTICE: Folder Download Not Supported At This Time</strong>
-                <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close" onClick={handleAlert}>X</button>
-            </div>
-        )}
-      <Box display='flex' justifyContent='center' margin={2}>
+      <Box display='flex' justifyContent='center' margin={2} width={'90%'}>
         <SearchBar setSkipFalse={setSkipFalse} />
       </Box>
-      <Box display='flex'>
-        <DownloadBtn  setShow={setShow}/>
+
+      <Box display='flex' justifyContent='end' width={'90%'}>
+        <DownloadBtn  setShow={setShow} />
         <GetURLBtn />
       </Box>
-      <BreadCrumbs setSkipFalse={setSkipFalse}/>
+
+
+      <Box display="flex" alignItems="center" width={'90%'}>
+        <BreadCrumbs setSkipFalse={setSkipFalse} />
+      </Box>
+
       <Box display='flex' justifyContent='center' margin={2} sx={{pb:2}}>
         <ResultsTable skip={skip} setSkipTrue={setSkipTrue} setSkipFalse={setSkipFalse}/>
       </Box>

@@ -49,7 +49,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
   const [urls, setUrls] = useState([]);
   const [rowData, setRowData] = useState();
   const [selectionModel, setSelectionModel] = useState([]);
-  const [divHeight, setDivHeight] = useState(window.innerHeight - 450);
+  const [divHeight, setDivHeight] = useState(window.innerHeight - 300);
   const granColumns = GetTableColumnDefinitions(search);
   const [progress, setProgress] = useState(0);
 
@@ -275,7 +275,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
 
   useEffect(() => {
     const handleResize = () => {
-      setDivHeight(window.innerHeight - 450);
+      setDivHeight(window.innerHeight - 300);
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);

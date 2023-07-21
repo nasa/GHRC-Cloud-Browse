@@ -63,7 +63,7 @@ const BreadCrumbs = ({ setSkipFalse }) => {
       <Box sx={{ml: 15, mt:1}}>
           <Breadcrumbs>
               <Typography onClick={() => handleRootClick()} sx={{cursor:"pointer"}}>
-                  <FaHome/> Root
+                  <FaHome/> Home
               </Typography>
               {crumbArray.map((crmb, index)=>(
                   crmb['crmb'] !== 'pub'?

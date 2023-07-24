@@ -72,13 +72,14 @@ const handleToggle = () => {setOpen(!open);}
       </Box>
 
       <Box display='flex' justifyContent='end' width={'90%'}>
-        <DownloadBtn  setShow={setShow}/>
-        <GetURLBtn />
-      </Box>
+        <Box width="70%">
+          <BreadCrumbs setSkipFalse={setSkipFalse} />
+        </Box>
 
-
-      <Box display="flex" alignItems="center" width={'90%'}>
-        <BreadCrumbs setSkipFalse={setSkipFalse} />
+        <Box width="30%" display="flex" justifyContent="flex-end">
+            <DownloadBtn setShow={setShow} />
+            <GetURLBtn />
+        </Box>
       </Box>
 
       <Box display='flex' justifyContent='center' margin={2} sx={{pb:2}}>

@@ -49,6 +49,9 @@ const DownloadBtn = ({ setShow, setfilesCount }) => {
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
+      style: {
+        fontWeight: 'bold'
+      },
     });
   };
 
@@ -61,6 +64,9 @@ const DownloadBtn = ({ setShow, setfilesCount }) => {
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
+      style: {
+        fontWeight: 'bold'
+      },
     });
   };
 

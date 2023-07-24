@@ -25,7 +25,7 @@ const App = () => {
   var url = window.location.href;
   var params = url.split('#')[1]
   const [open, setOpen] = useState(false)
-    const [img, setImg] = useState('')
+  const [img, setImg] = useState('')
 
   // console.log(url.split('#')[1]);
   useEffect(() => {
@@ -72,7 +72,7 @@ const handleToggle = () => {setOpen(!open);}
       </Box>
 
       <Box display='flex' justifyContent='end' width={'90%'}>
-        <DownloadBtn  setShow={setShow} />
+        <DownloadBtn  setShow={setShow}/>
         <GetURLBtn />
       </Box>
 

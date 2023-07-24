@@ -25,17 +25,17 @@ const DownloadBtn = ({ setShow, setfilesCount }) => {
         sumSize += 1
       }
     }
-    setfilesCount(sumSize)
 
     if (count === selectedList.length){
       setIsLoading(false);
       setProgress(1);
     }
 
-    if(count > 1){
+    if(count > 0){
       handleFolder()
     }
 
+    handleShowToast();
     FileDownloader(selectedList, setShow, setProgress);
     updateProgress(progress);
   };
@@ -88,7 +88,6 @@ const DownloadBtn = ({ setShow, setfilesCount }) => {
       <Button
         onClick={() => {
           handleClick();
-          handleShowToast();
         }}
         variant="outlined"
         sx={{ ml: 13, borderRadius: 2 }}

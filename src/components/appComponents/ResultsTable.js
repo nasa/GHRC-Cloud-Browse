@@ -362,7 +362,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
             </div>
           </div>
           <div className="progress-text">
-            Zip Progress: {progress.toFixed(0)}%
+            Download Progress: {progress.toFixed(0)}%
           </div>
         </div>
       )}

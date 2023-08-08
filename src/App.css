@@ -186,6 +186,7 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 99%;
 }
 
 .checked {
@@ -259,3 +260,19 @@ main {
   z-index: 9999; /* Set a high z-index to make sure it appears above other elements */
 }
 
+
+.versionAlign{
+  background: #186697;
+  border-radius: 0.124rem;
+  display: inline-block;
+  padding: 0 0.5rem;
+  vertical-align: middle;
+}
+
+.Toastify__toast--success {
+  color: #1976d2;
+}
+
+.Toastify__toast--success .Toastify__toast-body::before {
+  color: #1976d2; /* Change this to your desired color */
+}

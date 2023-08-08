@@ -47,7 +47,7 @@ export const useProgress = () => {
   return progressValue;
 };
 
-const downloader = async (linkList, setShow, setProgress) => {
+const downloader = async (linkList, setShow, setProgress, zipFlag) => {
   try {
     const zip = new JSZip();
     const maxFileSizeToZip = 200
@@ -70,19 +70,13 @@ const downloader = async (linkList, setShow, setProgress) => {
         const fileSizeMB = blob.size / (1024 * 1024);
         const fileName = link["Key"].split("/").pop();
 
-        if (fileSizeMB <= (maxFileSizeToZip/1024 * 1024)) {
-          const counterValue = (counter / (linkList.length - filesGreaterThanX_MB.length - folderCountSearch.length)) * 100
-          if (typeof setProgress === "function") {
-            updateProgress(counterValue);
-            setProgress(counterValue);
-          }
-          /*console.log(
-              "zipping",
-              counter,
-              "of",
-              linkList.length - filesGreaterThanX_MB.length - folderCountSearch.length
-          );*/
-          counter += 1;
+        const counterValue = (counter / (linkList.length - filesGreaterThanX_MB.length - folderCountSearch.length)) * 100
+        if (typeof setProgress === "function") {
+          updateProgress(counterValue);
+          setProgress(counterValue);
+        }
+        counter += 1;
+        if (fileSizeMB <= (maxFileSizeToZip/1024 * 1024) && !zipFlag) {
           zip.file(fileName, blob);
         } else {
           saveAs(blob, fileName);
@@ -94,7 +88,7 @@ const downloader = async (linkList, setShow, setProgress) => {
 
     if (Object.keys(zip.files).length > 0) {
       const zipBlob = await zip.generateAsync({ type: "blob" });
-      const zipFileName = linkList[0] && linkList[0].Key? (linkList[0].Key.split('/')[1])+'.zip':'download.zip';
+      const zipFileName = linkList[0] && linkList[0].Key? (linkList[0].Key.split('/')[1])+'_'+linkList[0].Key.split('/')[2]+'.zip':'download.zip';
       saveAs(zipBlob, zipFileName);
       updateProgress(100);
     } else {

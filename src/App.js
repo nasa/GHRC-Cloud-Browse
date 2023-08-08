@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import React, { useState, useEffect } from 'react'
+import React, {useState, useEffect } from 'react'
 import BreadCrumbs from './components/appComponents/BreadCrumbs'
 import DownloadBtn from './components/appComponents/DownloadBtn'
 import GetURLBtn from './components/appComponents/GetURLBtn'
@@ -25,7 +25,7 @@ const App = () => {
   var url = window.location.href;
   var params = url.split('#')[1]
   const [open, setOpen] = useState(false)
-    const [img, setImg] = useState('')
+  const [img, setImg] = useState('')
 
   // console.log(url.split('#')[1]);
   useEffect(() => {
@@ -67,20 +67,21 @@ const handleToggle = () => {setOpen(!open);}
 
   return (
     <>
-        {show && (
-            <div className={`alert alert-danger alert-dismissible fade show`} role="alert">
-                <strong>NOTICE: Folder Download Not Supported At This Time</strong>
-                <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close" onClick={handleAlert}>X</button>
-            </div>
-        )}
-      <Box display='flex' justifyContent='center' margin={2}>
+      <Box display='flex' justifyContent='center' margin={2} width={'90%'}>
         <SearchBar setSkipFalse={setSkipFalse} />
       </Box>
-      <Box display='flex'>
-        <DownloadBtn  setShow={setShow}/>
-        <GetURLBtn />
+
+      <Box display='flex' justifyContent='end' width={'90%'}>
+        <Box width="70%">
+          <BreadCrumbs setSkipFalse={setSkipFalse} />
+        </Box>
+
+        <Box width="30%" display="flex" justifyContent="flex-end">
+            <DownloadBtn setShow={setShow} />
+            <GetURLBtn />
+        </Box>
       </Box>
-      <BreadCrumbs setSkipFalse={setSkipFalse}/>
+
       <Box display='flex' justifyContent='center' margin={2} sx={{pb:2}}>
         <ResultsTable skip={skip} setSkipTrue={setSkipTrue} setSkipFalse={setSkipFalse}/>
       </Box>

@@ -116,12 +116,12 @@ function TextFileViewer({
               className={
                 "downPrint" + (useProgress() !== 0 ? " disabled-icon" : "")
               }
-              onClick={() => FileDownloader(urls, false, setProgress)}
+              onClick={() => FileDownloader(urls, false, setProgress, false)}
             >
               <BiCartDownload
                 className="fa-download-print"
                 size={32}
-                title="Download All"
+                title="Download as zip"
               />
             </button>
           </span>

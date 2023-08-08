@@ -83,13 +83,13 @@ const GetURLBtn = () => {
         })
     }
 
-
   return (
     <div>
     <Button
     onClick={() => {handleClick()}}
     variant='outlined'
-    sx={{ml: 3, borderRadius: 2}}>
+    sx={{ml: 3, borderRadius: 2}}
+    disabled={ selectedList.length === 0}>
         Get URL
     </Button>
     {/* <Button onClick={handleClickOpen()}>scroll=paper</Button> */}
@@ -127,7 +127,6 @@ const GetURLBtn = () => {
         <Button onClick={handleCopy}>Copy to Clipboard</Button>
         <Button onClick={handleDownload}>Download as a file</Button>
           <Button onClick={handleClose}>Close</Button>
-
         </DialogActions>
       </Dialog>
 

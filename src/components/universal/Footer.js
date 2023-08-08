@@ -35,6 +35,10 @@ export const Footer = () => {
               variant='caption' color='inherit' underline='hover' textAlign='center' sx={{ ml: 2 }}>
           USA.gov
         </Link>
+        <Link target='_blank' href='https://ghrc.nsstc.nasa.gov/home/ghrc-docs/cloud_browse_tutorial/'
+              variant='caption' color='inherit' underline='hover' textAlign='center' sx={{ ml: 2 }}>
+          User Guide
+        </Link>
       </Box>
     </AppBar>
   )

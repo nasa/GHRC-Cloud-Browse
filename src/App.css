@@ -186,7 +186,7 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 99%;
+  /*width: 99%;*/
 }
 
 .checked {
@@ -275,4 +275,16 @@ main {
 
 .Toastify__toast--success .Toastify__toast-body::before {
   color: #1976d2; /* Change this to your desired color */
+}
+
+.search-input {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: border-color 0.3s;
+}
+
+.search-input:focus {
+  border-color: #007bff;
+  outline: none;
 }

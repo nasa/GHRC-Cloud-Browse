@@ -68,7 +68,7 @@ const handleToggle = () => {setOpen(!open);}
   return (
     <>
       <Box display='flex' justifyContent='center' margin={2} width={'90%'}>
-        <SearchBar setSkipFalse={setSkipFalse} />
+       {/* <SearchBar setSkipFalse={setSkipFalse} />*/}
       </Box>
 
       <Box display='flex' justifyContent='end' width={'90%'}>

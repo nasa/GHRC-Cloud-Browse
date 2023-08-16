@@ -7,12 +7,12 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import printJS from "print-js";
-import config from "../../config";
-import { isImage } from "../../lib/isImage";
+import config from "../../../config";
+import { isImage } from "../../../lib/isImage";
 import FileDownloader, {
   downloadFile,
   useProgress,
-} from "../universal/FileDownloader";
+} from "../../universal/FileDownloader";
 import { BiCartDownload, BiZoomIn, BiZoomOut } from "react-icons/bi";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 import { TbZoomReset } from "react-icons/tb";
@@ -60,7 +60,6 @@ const ImageViewer = ({
     //setScale(1);
   };
 
-  console.log("useProgress->", useProgress());
   return (
     <div style={{ height: "100%", width: "100%", textAlign: "center" }}>
       <span /*style={{ float: 'right' }}*/ className={"topRight"}>

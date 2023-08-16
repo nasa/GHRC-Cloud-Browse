@@ -12,7 +12,7 @@ import { BiCartDownload } from "react-icons/bi";
 import FileDownloader, {
   downloadFile,
   useProgress,
-} from "../universal/FileDownloader";
+} from "../../universal/FileDownloader";
 
 function TextFileViewer({
   fileUrl,

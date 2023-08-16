@@ -1,5 +1,5 @@
 import { Viewer, Worker } from "@react-pdf-viewer/core";
-import config from "../../config";
+import config from "../../../config";
 import React from "react";
 import * as pdfjs from "pdfjs-dist";
 import { toolbarPlugin } from "@react-pdf-viewer/toolbar";
@@ -12,11 +12,11 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import printJS from "print-js";
-import { isImage } from "../../lib/isImage";
+import { isImage } from "../../../lib/isImage";
 import FileDownloader, {
   downloadFile,
   useProgress,
-} from "../universal/FileDownloader";
+} from "../../universal/FileDownloader";
 import { BiCartDownload } from "react-icons/bi";
 
 const PdfViewer = ({

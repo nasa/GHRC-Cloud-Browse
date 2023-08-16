@@ -1,9 +1,9 @@
-import config from "../../config";
-import { isImage } from "../../lib/isImage";
+import config from "../../../config";
+import { isImage } from "../../../lib/isImage";
 import FileDownloader, {
   downloadFile,
   useProgress,
-} from "../universal/FileDownloader";
+} from "../../universal/FileDownloader";
 import {
   FaArrowLeft,
   FaArrowRight,

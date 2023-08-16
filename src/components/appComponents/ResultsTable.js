@@ -12,12 +12,12 @@ import { alpha, Backdrop } from "@mui/material";
 import config from "../../config";
 import { useHref } from "react-router-dom";
 import "../../App.css";
-import TextFileViewer from "./TextFileViewer";
-import ImageViewer from "./ImageViewer";
+import TextFileViewer from "./fileViewer/TextFileViewer";
+import ImageViewer from "./fileViewer/ImageViewer";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
-import PdfViewer from "./PdfViewer";
-import MiscDocsViewer from "./MiscDocsViewer";
+import PdfViewer from "./fileViewer/PdfViewer";
+import MiscDocsViewer from "./fileViewer/MiscDocsViewer";
 import GetTableColumnDefinitions from "./TableUtils";
 import {
   updateProgress,

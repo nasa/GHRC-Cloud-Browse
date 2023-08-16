@@ -4,7 +4,6 @@ import BreadCrumbs from './components/appComponents/BreadCrumbs'
 import DownloadBtn from './components/appComponents/DownloadBtn'
 import GetURLBtn from './components/appComponents/GetURLBtn'
 import ResultsTable from './components/appComponents/ResultsTable'
-import SearchBar from './components/appComponents/SearchBar'
 import { useDispatch } from 'react-redux'
 import { setDelim } from './feature/delimSlice'
 import { setSearch } from './feature/searchSlice'
@@ -42,7 +41,6 @@ const App = () => {
         handleToggle()
     }
       // dispatch(setCrumb(params))
-
     }
 
   }, [params])

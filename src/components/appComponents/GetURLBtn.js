@@ -62,8 +62,6 @@ const GetURLBtn = () => {
         downloader(selectedList)
         handleClickOpen()
     }
-
-
     const downloader = (linkList) => {
         var sourceIMGUrl = config.sourceIMGUrl;
         var url = window.location.href;

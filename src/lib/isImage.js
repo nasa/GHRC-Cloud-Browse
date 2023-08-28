@@ -27,6 +27,10 @@ export const isImage = (gran) =>{
             return 'gz'
         case 'ps':
             return 'ps'
+        case 'md5':
+            return 'md5'
+        case 'tgz':
+            return 'tgz'
         default:
             return false
     }

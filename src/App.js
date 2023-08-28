@@ -31,12 +31,12 @@ const App = () => {
     if(params !== undefined && params !==''){
       setSkipFalse()
       dispatch(setDelim('/'))
-      console.log(params);
+      //console.log(params);
       dispatch(setSearch(params))
       dispatch(setCrumb(params))
 
       if (isImage(params)){
-        console.log('in')
+        //console.log('in')
         setImg(params)
         handleToggle()
     }

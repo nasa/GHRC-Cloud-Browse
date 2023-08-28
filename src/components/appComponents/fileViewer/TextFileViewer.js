@@ -1,18 +1,9 @@
 import React, { useState, useEffect } from "react";
-import {
-  FaArrowLeft,
-  FaArrowRight,
-  FaCheckCircle,
-  FaDownload,
-  FaPrint,
-  FaTimes,
-} from "react-icons/fa";
 import printJS from "print-js";
-import { BiCartDownload } from "react-icons/bi";
 import FileDownloader, {
-  downloadFile,
   useProgress,
 } from "../../universal/FileDownloader";
+import NavigationButton from "./NavigationButton";
 
 function TextFileViewer({
   fileUrl,
@@ -77,37 +68,35 @@ function TextFileViewer({
         {fileUrl.split("/").pop()}
         <span className={"topRight"}>
           <span className={!showArrowLeft ? "disabled-icon" : ""}>
-            <FaArrowLeft
-              className={"printIcon cursorPtr leftRightArrow"}
-              title={"prev"}
-              size={32}
-              onClick={() => handleNavigationClick(rowData, "left")}
-            />
+           <NavigationButton
+             onClick={() => handleNavigationClick(rowData, "left")}
+             title={"prev"}
+             direction="prev"
+           />
           </span>
           <span className={"printIcon"}>
             <button className={"downPrint"} onClick={printFile}>
-              <FaPrint className="fa-download-print" title="Print" size={32} />
+               <NavigationButton
+                 direction="print"
+                 title="Print"
+               />
             </button>
           </span>
           <span className={"printIcon"}>
             <button className={"downPrint"} onClick={downloadFile}>
-              <FaDownload
-                className="fa-download-print"
+              <NavigationButton
+                onClick={''}
+                direction="download"
                 title="Download"
-                size={32}
               />
             </button>
           </span>
           <span className={"printIcon"}>
             <button className={"downPrint"} onClick={() => addFile(rowData)}>
-              <FaCheckCircle
-                className={`${
-                  isExist(rowData)
-                    ? "fa-download-print checked"
-                    : "fa-download-print unchecked"
-                }`}
-                size={32}
-                title="Download"
+              <NavigationButton
+                isExist={isExist(rowData)}
+                direction="check"
+                title="Select"
               />
             </button>
           </span>
@@ -118,26 +107,24 @@ function TextFileViewer({
               }
               onClick={() => FileDownloader(urls, false, setProgress, false)}
             >
-              <BiCartDownload
-                className="fa-download-print"
-                size={32}
+              <NavigationButton
+                onClick={''}
+                direction="Download as zip"
                 title="Download as zip"
               />
             </button>
           </span>
-          <FaTimes
+          <NavigationButton
             onClick={() => handleClose(rowData)}
             title={"Close"}
-            className={"printIcon downPrint"}
-            size={36}
+            direction="Close"
           />
           <span className={!showArrowRight ? "disabled-icon" : ""}>
-            <FaArrowRight
-              className={"printIcon cursorPtr leftRightArrow"}
-              title={"next"}
-              size={32}
-              onClick={() => handleNavigationClick(rowData, "right")}
-            />
+             <NavigationButton
+               onClick={() => handleNavigationClick(rowData, "right")}
+               title={"next"}
+               direction="next"
+             />
           </span>
         </span>
       </h2>

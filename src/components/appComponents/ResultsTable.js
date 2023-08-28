@@ -370,8 +370,8 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
       <span style={{ marginLeft: '15px' }}>
         <input
           type="text"
-          placeholder="Search by name"
-          title="Search by name"
+          placeholder="Search by Name"
+          title="Search by Name"
           className={'search-input'}
           value={searchTerm}
           onChange={handleSearch}

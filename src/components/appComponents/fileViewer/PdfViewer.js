@@ -3,21 +3,13 @@ import config from "../../../config";
 import React from "react";
 import * as pdfjs from "pdfjs-dist";
 import { toolbarPlugin } from "@react-pdf-viewer/toolbar";
-import {
-  FaArrowLeft,
-  FaArrowRight,
-  FaCheckCircle,
-  FaDownload,
-  FaPrint,
-  FaTimes,
-} from "react-icons/fa";
 import printJS from "print-js";
 import { isImage } from "../../../lib/isImage";
 import FileDownloader, {
   downloadFile,
   useProgress,
 } from "../../universal/FileDownloader";
-import { BiCartDownload } from "react-icons/bi";
+import NavigationButton from "./NavigationButton";
 
 const PdfViewer = ({
   handleNavigationClick,
@@ -47,11 +39,10 @@ const PdfViewer = ({
         </span>
         <span /*style={{ float: 'right' }}*/ className={"topRight"}>
           <span className={!showArrowLeft ? "disabled-icon" : ""}>
-            <FaArrowLeft
-              className={"printIcon cursorPtr leftRightArrow"}
-              title={"prev"}
-              size={32}
+            <NavigationButton
               onClick={() => handleNavigationClick(rowData, "left")}
+              title={"prev"}
+              direction="prev"
             />
           </span>
           <span className={"printIcon"}>
@@ -64,7 +55,10 @@ const PdfViewer = ({
                 })
               }
             >
-              <FaPrint className="fa-download-print" size={32} title="Print" />
+              <NavigationButton
+                direction="print"
+                title="Print"
+              />
             </button>
           </span>
           <span className={"printIcon"}>
@@ -72,22 +66,20 @@ const PdfViewer = ({
               className={"downPrint"}
               onClick={() => downloadFile(`${config.cloudWatchUrlBase}${img}`)}
             >
-              <FaDownload
-                className="fa-download-print"
-                size={32}
+              <NavigationButton
+                onClick={''}
+                direction="download"
                 title="Download"
               />
             </button>
           </span>
           <span className={"printIcon"}>
             <button className={"downPrint"} onClick={() => addFile(rowData)}>
-              <FaCheckCircle
-                className={`fa-download-print ${
-                  isExist(rowData) ? "checked" : "unchecked"
-                }`}
-                size={32}
-                title="Download"
-              />
+             <NavigationButton
+               isExist={isExist(rowData)}
+               direction="check"
+               title="Select"
+             />
             </button>
           </span>
           <span className={"printIcon"}>
@@ -97,26 +89,24 @@ const PdfViewer = ({
               }
               onClick={() => FileDownloader(urls, false, setProgress, false)}
             >
-              <BiCartDownload
-                className="fa-download-print"
-                size={32}
+              <NavigationButton
+                onClick={''}
+                direction="Download as zip"
                 title="Download as zip"
               />
             </button>
           </span>
-          <FaTimes
+          <NavigationButton
             onClick={() => handleClose(rowData)}
             title={"Close"}
-            className={"printIcon downPrint"}
-            size={36}
+            direction="Close"
           />
           <span className={!showArrowRight ? "disabled-icon" : ""}>
-            <FaArrowRight
-              className={"printIcon cursorPtr leftRightArrow"}
-              title={"next"}
-              size={32}
-              onClick={() => handleNavigationClick(rowData, "right")}
-            />
+             <NavigationButton
+               onClick={() => handleNavigationClick(rowData, "right")}
+               title={"next"}
+               direction="next"
+             />
           </span>
         </span>
       </div>

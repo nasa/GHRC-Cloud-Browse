@@ -1,18 +1,11 @@
-import config from "../../config";
-import { isImage } from "../../lib/isImage";
+import config from "../../../config";
+import { isImage } from "../../../lib/isImage";
 import FileDownloader, {
   downloadFile,
   useProgress,
-} from "../universal/FileDownloader";
-import {
-  FaArrowLeft,
-  FaArrowRight,
-  FaCheckCircle,
-  FaDownload,
-  FaTimes,
-} from "react-icons/fa";
-import { BiCartDownload } from "react-icons/bi";
+} from "../../universal/FileDownloader";
 import React from "react";
+import NavigationButton from "./NavigationButton";
 
 const MiscDocsViewer = ({
   addFile,
@@ -43,9 +36,9 @@ const MiscDocsViewer = ({
                   downloadFile(`${config.cloudWatchUrlBase}${img}`)
                 }
               >
-                <FaDownload
-                  className="fa-download-print"
-                  size={40}
+                <NavigationButton
+                  onClick={''}
+                  direction="download"
                   title="Download"
                 />
               </button>
@@ -59,21 +52,18 @@ const MiscDocsViewer = ({
       </h2>
       <span /*style={{ float: 'right' }}*/ className={"topRight"}>
         <span className={!showArrowLeft ? "disabled-icon" : ""}>
-          <FaArrowLeft
-            className={"printIcon cursorPtr leftRightArrow"}
-            title={"prev"}
-            size={32}
+          <NavigationButton
             onClick={() => handleNavigationClick(rowData, "left")}
+            title={"prev"}
+            direction="prev"
           />
         </span>
         <span className={"printIcon"}>
           <button className={"downPrint"} onClick={() => addFile(rowData)}>
-            <FaCheckCircle
-              className={`fa-download-print ${
-                isExist(rowData) ? "checked" : "unchecked"
-              }`}
-              size={32}
-              title="Download"
+            <NavigationButton
+              isExist={isExist(rowData)}
+              direction="check"
+              title="Select"
             />
           </button>
         </span>
@@ -84,26 +74,24 @@ const MiscDocsViewer = ({
             }
             onClick={() => FileDownloader(urls, false, setProgress, false)}
           >
-            <BiCartDownload
-              className="fa-download-print"
-              size={32}
+            <NavigationButton
+              onClick={''}
+              direction="Download as zip"
               title="Download as zip"
             />
           </button>
         </span>
-        <FaTimes
+        <NavigationButton
           onClick={() => handleClose(rowData)}
           title={"Close"}
-          className={"printIcon downPrint"}
-          size={36}
+          direction="Close"
         />
         <span className={!showArrowRight ? "disabled-icon" : ""}>
-          <FaArrowRight
-            className={"printIcon cursorPtr leftRightArrow"}
-            title={"next"}
-            size={32}
-            onClick={() => handleNavigationClick(rowData, "right")}
-          />
+           <NavigationButton
+             onClick={() => handleNavigationClick(rowData, "right")}
+             title={"next"}
+             direction="next"
+           />
         </span>
       </span>
     </div>

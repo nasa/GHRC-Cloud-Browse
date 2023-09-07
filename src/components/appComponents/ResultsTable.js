@@ -12,12 +12,12 @@ import { alpha, Backdrop } from "@mui/material";
 import config from "../../config";
 import { useHref } from "react-router-dom";
 import "../../App.css";
-import TextFileViewer from "./TextFileViewer";
-import ImageViewer from "./ImageViewer";
+import TextFileViewer from "./fileViewer/TextFileViewer";
+import ImageViewer from "./fileViewer/ImageViewer";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
-import PdfViewer from "./PdfViewer";
-import MiscDocsViewer from "./MiscDocsViewer";
+import PdfViewer from "./fileViewer/PdfViewer";
+import MiscDocsViewer from "./fileViewer/MiscDocsViewer";
 import GetTableColumnDefinitions from "./TableUtils";
 import {
   updateProgress,
@@ -26,7 +26,7 @@ import {
   cancelDownload,
 } from "../universal/FileDownloader";
 import { Line } from "rc-progress";
-import {FaTimes} from "react-icons/fa";
+import { FaTimes } from "react-icons/fa";
 
 //**********variable and class delarations**********/
 const parser = new XMLParser();
@@ -49,10 +49,11 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
   const [urls, setUrls] = useState([]);
   const [rowData, setRowData] = useState();
   const [selectionModel, setSelectionModel] = useState([]);
-  const [divHeight, setDivHeight] = useState(window.innerHeight - 300);
+  const [divHeight, setDivHeight] = useState(window.innerHeight - 225);
   const granColumns = GetTableColumnDefinitions(search);
   const [progress, setProgress] = useState(0);
-
+  const [rows, setRows] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   //**************Table Layout Functions*************** */
 
   const convertToList = (data) => {
@@ -123,8 +124,20 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
       setResponse(
         [...processedResp].sort((a, b) => a["Key"].localeCompare(b["Key"]))
       );
+
+      setRows(
+        [...processedResp].sort((a, b) => a["Key"].localeCompare(b["Key"]))
+      );
+
+      setSearchTerm('')
     } else {
       setResponse(
+        [...processedResp]
+          .sort((a, b) => a["Key"].localeCompare(b["Key"]))
+          .reverse()
+      );
+
+      setRows(
         [...processedResp]
           .sort((a, b) => a["Key"].localeCompare(b["Key"]))
           .reverse()
@@ -269,13 +282,14 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
 
   useEffect(() => {
     if (sortedData && sortedData.length > 0) {
-      setResponse(sortedData);
+      //setResponse(sortedData);
+      setRows(sortedData)
     }
   }, [sortedData]);
 
   useEffect(() => {
     const handleResize = () => {
-      setDivHeight(window.innerHeight - 300);
+      setDivHeight(window.innerHeight - 225);
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -284,7 +298,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
   const handleSortModelChange = (model) => {
     if (model[0]) {
       const order = model[0].sort;
-      let local = [...response];
+      let local = [...rows];
       if (order === "asc") {
         local.sort((a, b) => a["Key"].localeCompare(b["Key"]));
         setSortOrder("asc");
@@ -338,6 +352,35 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
   if (progress === 100) {
     updateProgress(0);
   }
+
+  const handleSearch = (event) => {
+    const value = event.target.value;
+    setSearchTerm(value);
+
+    const filteredRows = response.filter((row) =>
+      row.Key.toLowerCase().includes(value.toLowerCase())
+    );
+
+    setRows(filteredRows);
+  };
+
+  granColumns[0].renderHeader = () => (
+    <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr' }}>
+      <span style={{ fontWeight: 'bold' }}>Name</span>
+      <span style={{ marginLeft: '15px' }}>
+        <input
+          type="text"
+          placeholder="Search by Name"
+          title="Search by Name"
+          className={'search-input'}
+          value={searchTerm}
+          onChange={handleSearch}
+          onClick={(e) => e.stopPropagation()}
+        />
+      </span>
+    </div>
+  )
+
   //**********jsx html**********
   return (
     <div style={{ height: `${divHeight}px`, width: "90%" }}>
@@ -383,7 +426,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
           },
           borderRadius: 2,
         }}
-        rows={response}
+        rows={rows}
         columns={granColumns}
         disableColumnMenu={true}
         rowsPerPageOptions={[10, 25, 50, 100]}

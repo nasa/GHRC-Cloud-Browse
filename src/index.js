@@ -12,6 +12,9 @@ import { Helmet } from 'react-helmet';
 
 const baseUrl = process.env.REACT_APP_BASE_URL || '/';
 
+// Disable React's development warnings
+if (baseUrl !== '/') console.error = () => {};
+
 const root = createRoot(document.getElementById('root'))
 
 root.render(

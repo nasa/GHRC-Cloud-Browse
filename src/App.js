@@ -4,7 +4,6 @@ import BreadCrumbs from './components/appComponents/BreadCrumbs'
 import DownloadBtn from './components/appComponents/DownloadBtn'
 import GetURLBtn from './components/appComponents/GetURLBtn'
 import ResultsTable from './components/appComponents/ResultsTable'
-import SearchBar from './components/appComponents/SearchBar'
 import { useDispatch } from 'react-redux'
 import { setDelim } from './feature/delimSlice'
 import { setSearch } from './feature/searchSlice'
@@ -32,17 +31,16 @@ const App = () => {
     if(params !== undefined && params !==''){
       setSkipFalse()
       dispatch(setDelim('/'))
-      console.log(params);
+      //console.log(params);
       dispatch(setSearch(params))
       dispatch(setCrumb(params))
 
       if (isImage(params)){
-        console.log('in')
+        //console.log('in')
         setImg(params)
         handleToggle()
     }
       // dispatch(setCrumb(params))
-
     }
 
   }, [params])
@@ -68,7 +66,7 @@ const handleToggle = () => {setOpen(!open);}
   return (
     <>
       <Box display='flex' justifyContent='center' margin={2} width={'90%'}>
-        <SearchBar setSkipFalse={setSkipFalse} />
+       {/* <SearchBar setSkipFalse={setSkipFalse} />*/}
       </Box>
 
       <Box display='flex' justifyContent='end' width={'90%'}>

@@ -159,18 +159,6 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     };
   }, [progress]);
 
-
-  // useEffect(()=>{
-  //   const url = window.location.href
-  //   if (url.indexOf(".") !== -1){
-  //     const id = url.split("#")[1]
-  //     setFilePath(`${config.cloudWatchUrlBase}${id}`)
-  //     setImg(id);
-  //     setRowData(response);
-  //     setOpen(true);
-  //   }
-  // })
-
   const updateBrowserURL = (id) => {
     // Modify the URL
     var newUrl = "browseui/#" + id;
@@ -260,7 +248,6 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
 
   const handleClose = (rowData) => {
     let img = rowData.Key;
-    console.log("inside handleClose",img)
     //To set the next image to original size
     setScale(1);
     const desiredPath = img.substring(0, img.lastIndexOf("/") + 1);

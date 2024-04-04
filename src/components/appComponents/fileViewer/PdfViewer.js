@@ -27,7 +27,8 @@ const PdfViewer = ({
   const workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
   const toolbarPluginInstance = toolbarPlugin();
   const { Toolbar } = toolbarPluginInstance;
-
+  // console.log("pdfViewer....")
+  // console.log(rowData)
   return (
     <>
       <div style={{ textAlign: "center" }}>

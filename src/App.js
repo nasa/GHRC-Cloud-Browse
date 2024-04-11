@@ -90,8 +90,8 @@ const handleToggle = () => {setOpen(!open);}
         >
             <Box component='img'
                 src={!isImage(img) ? '' :`${config.cloudWatchUrlBase}${img}`}
-                />
-        </Backdrop> */}
+            />
+      </Backdrop> */}
     </>
   )
 }

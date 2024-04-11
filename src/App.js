@@ -83,7 +83,7 @@ const handleToggle = () => {setOpen(!open);}
       <Box display='flex' justifyContent='center' margin={2} sx={{pb:2}}>
         <ResultsTable skip={skip} setSkipTrue={setSkipTrue} setSkipFalse={setSkipFalse}/>
       </Box>
-      <Backdrop
+      {/* <Backdrop
             sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
             open={open}
             onClick={handleClose}
@@ -91,7 +91,7 @@ const handleToggle = () => {setOpen(!open);}
             <Box component='img'
                 src={!isImage(img) ? '' :`${config.cloudWatchUrlBase}${img}`}
                 />
-        </Backdrop>
+        </Backdrop> */}
     </>
   )
 }

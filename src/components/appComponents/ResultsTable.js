@@ -235,17 +235,6 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     setScale(1);
   };
 
-  useEffect(()=>{
-    const url = window.location.href
-    if (url.indexOf(".") !== -1){
-      const id = url.split("#")[1]
-      setFilePath(`${config.cloudWatchUrlBase}${id}`)
-      setImg(id);
-      setRowData(response[0]);
-      setOpen(true);
-    }
-  })
-
   const handleClose = (rowData) => {
     let img = rowData.Key;
     //To set the next image to original size

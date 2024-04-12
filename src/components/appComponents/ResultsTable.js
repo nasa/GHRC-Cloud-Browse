@@ -256,6 +256,22 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     setImg("");
   };
 
+  useEffect(()=>{
+    const url = window.location.href
+    if (url.indexOf(".") !== -1 && url.indexOf('#') !== -1){ //run only if '.' and '#' is present in the url
+      const id = url.split("#")[1]
+      const url_split = url.split(".")
+      const url_last_element = url_split[url_split.length - 1]
+
+      if(isImage(url_last_element)){ //only run if the extension is one of the ones list on the isImage.js file
+        setFilePath(`${config.cloudWatchUrlBase}${id}`)
+        setImg(id);
+        setRowData(response[0]);
+        setOpen(true);
+      }
+    }
+  }, [response])
+
   //**********Api Logic**********
   const {
     data: resp,

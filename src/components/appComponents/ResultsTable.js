@@ -27,6 +27,7 @@ import {
 } from "../universal/FileDownloader";
 import { Line } from "rc-progress";
 import { FaTimes } from "react-icons/fa";
+import Mp4Viewer from "./fileViewer/Mp4Viewer";
 
 //**********variable and class delarations**********/
 const parser = new XMLParser();
@@ -361,6 +362,8 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     ViewerComponent = PdfViewer;
   } else if (isImage(img) === "text") {
     ViewerComponent = TextFileViewer;
+  }else if(isImage(img) === "mp4" || isImage(img) === "mov"|| isImage(img) === "avi"){
+    ViewerComponent = Mp4Viewer
   } else {
     ViewerComponent = MiscDocsViewer;
   }

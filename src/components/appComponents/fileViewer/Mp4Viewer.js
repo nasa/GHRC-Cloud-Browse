@@ -108,6 +108,8 @@ const Mp4Viewer = ({
         <div>
             <video key={filePath} controls width="800">
                 <source src={filePath} type="video/mp4" />
+                <source src={filePath} type="video/quicktime" />
+                <source src={filePath} type="video/x-msvideo" />
                 Your browser does not support the video tag.
             </video>
         </div>

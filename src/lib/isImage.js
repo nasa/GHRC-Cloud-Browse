@@ -33,6 +33,10 @@ export const isImage = (gran) =>{
             return 'tgz'
         case 'mp4':
             return 'mp4'
+        case 'mov':
+            return 'mov'
+        case 'avi':
+            return 'avi'
         default:
             return false
     }

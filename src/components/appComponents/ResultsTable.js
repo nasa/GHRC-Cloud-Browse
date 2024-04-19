@@ -362,7 +362,7 @@ const ResultsTable = ({ skip, setSkipTrue, setSkipFalse }) => {
     ViewerComponent = PdfViewer;
   } else if (isImage(img) === "text") {
     ViewerComponent = TextFileViewer;
-  }else if(isImage(img) === "mp4"){
+  }else if(isImage(img) === "mp4" || isImage(img) === "mov"|| isImage(img) === "avi"){
     ViewerComponent = Mp4Viewer
   } else {
     ViewerComponent = MiscDocsViewer;

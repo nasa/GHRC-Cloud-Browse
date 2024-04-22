@@ -166,8 +166,7 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 42rem;
-  /* background-color: blue; */
+  height: 100%;
 }
 
 .img-zoom-in-out {

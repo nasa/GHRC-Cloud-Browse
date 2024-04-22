@@ -32,14 +32,14 @@ const ImageViewer = ({
   const handleZoomIn = () => {
     const { current: transformComponent } = transformComponentRef;
     if (transformComponent) {
-      setScale((prevScale) => prevScale + 0.1);
+      setScale((prevScale) => prevScale + 2);
     }
   };
 
   const handleZoomOut = () => {
     const { current: transformComponent } = transformComponentRef;
     if (transformComponent) {
-      setScale((prevScale) => prevScale / 1.1);
+      setScale((prevScale) => prevScale - 2);
     }
   };
 
@@ -146,7 +146,7 @@ const ImageViewer = ({
                 key={filePath}
                 src={filePath}
                 alt={"Zoomable Image" + filePath}
-                style={{height:'auto', width:'auto', maxHeight:'100%', maxWidth:'100%', transform: `scale(${scale})`}}
+                style={{height:`${70+scale}vh`, width:`${80+scale}vw`}}
                 // style={{ transform: `scale(${scale})` }}
               />
             </TransformComponent>
